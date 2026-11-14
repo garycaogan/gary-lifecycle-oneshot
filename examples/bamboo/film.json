@@ -1,0 +1,371 @@
+{
+ "title": "竹子的一生",
+ "aspect": "9:16",
+ "budget_cny": 40,
+ "lead": 0.5,
+ "tail": 2.6,
+ "script": [
+  "竹子长得比树还高，可它不是树，是一种草。",
+  "土里横着走的这一段，不叫根，叫做竹鞭。",
+  "竹鞭一节一节，节上冒出的芽，叫做笋芽。",
+  "冬天笋芽在土里慢慢长胖，还没出土，就是冬笋。",
+  "一场春雨过后，笋尖顶开泥土，便是雨后春笋。",
+  "笋身裹着一层层笋壳，古人叫它箨。",
+  "诗里便有，绿竹半含箨，新梢才出墙。",
+  "春笋长得最快的时候，一天能蹿高一米，叫做拔节。",
+  "笋出土时有多粗，长成竹子就有多粗，以后只长高，不长胖。",
+  "笋壳一片片落下，露出青绿的竹竿，就成了新竹。",
+  "竹节上抽枝展叶，两个月，就能长到十几米高。",
+  "新竹老竹连成一片，就是竹林，古人也叫它篁。",
+  "诗里便有，独坐幽篁里，弹琴复长啸。",
+  "苏轼也说，宁可食无肉，不可居无竹。",
+  "很多竹子，要几十年才开一次花。",
+  "花谢以后结出的果实，叫做竹米，古人叫它练实。",
+  "庄子说，有一种像凤凰的神鸟，非练实不食。",
+  "开过花的竹子往往成片枯去，竹米落进土里，又长出新竹。",
+  "土里的竹鞭连着整片竹林，一片竹林，常常就是同一棵竹子。",
+  "所以郑板桥写竹，咬定青山不放松，立根原在破岩中。"
+ ],
+ "voice": {
+  "direction": "一位三十岁左右的女性自然科普纪录片旁白，嗓音温柔、清亮、干净，语气平稳舒缓，像在耐心地给人讲大自然里的故事，带一点发现的惊喜，不是播音腔，也不夸张。念到每个名词时稍微放慢、咬清楚；念古诗时放慢半拍，有一点吟诵感但不拖腔；句和句之间有自然的换气停顿，整体语速中等偏慢。",
+  "speech_rate": 1.07,
+  "target_cps": [
+   3.0,
+   3.5
+  ],
+  "speak": {},
+  "hint": "竹子、竹鞭、笋芽、冬笋、春笋、箨、拔节、篁、练实、郑板桥。"
+ },
+ "look": "Photorealistic nature documentary macro photograph, shot on a full-frame camera with a macro lens, natural soft daylight, rich true-to-life greens and earth tones, crisp detail, shallow depth of field, no people, no animals unless named, no text, no watermark, no borders. Vertical 9:16 frame.",
+ "keyframes": [
+  {
+   "id": "K00",
+   "from": "K01",
+   "camera": "the camera has risen above the ground and tilts up from a low angle at the base of the bamboo grove, looking up along several very tall straight green bamboo culms that soar far above like trees, their tops lost in bright leafy canopy; only a thin strip of the fallen-leaf forest floor shows at the bottom edge.",
+   "change": "a towering bamboo grove in soft morning light, tall smooth green culms with pale node rings, the scale of tall trees."
+  },
+  {
+   "id": "K01",
+   "prompt": "Underground cross-section view through dark moist forest soil, like a glass-walled soil profile: a thick pale golden-yellow bamboo rhizome runs horizontally across the middle of the frame, segmented by clear ring-shaped nodes every few centimetres, fine hair roots hanging from each node. On the node at the centre of the frame sits one tiny pointed cream-coloured bud, the size of a fingertip. The top fifth of the frame shows the soil surface with brown fallen bamboo leaves and the bases of green bamboo culms in soft morning light."
+  },
+  {
+   "id": "K02",
+   "from": "K01",
+   "change": "the tiny bud on the central node has grown into a plump cone-shaped winter bamboo shoot about the size of a fist, wrapped in overlapping light-brown hairy sheaths, its pointed tip angled upward toward the surface, still fully underground; a thin layer of white frost now covers the fallen leaves on the soil surface at the top."
+  },
+  {
+   "id": "K03",
+   "from": "K02",
+   "camera": "the camera has risen so the soil surface line now sits across the lower third of the frame, a shallow strip of the soil cross-section still visible below it, eye level just above the ground.",
+   "change": "after a spring rain: dark wet soil and glistening wet fallen bamboo leaves; the pointed brown-sheathed tip of the bamboo shoot has just pushed up through the soil surface at the centre, a few centimetres out, with cracked soil around it; raindrops on everything, soft overcast light, green bamboo culm bases blurred in the background."
+  },
+  {
+   "id": "K04",
+   "from": "K03",
+   "camera": "the camera is now at ground level close to the shoot, the soil cross-section strip gone, the shoot centred and filling the lower two thirds of the frame.",
+   "change": "the spring bamboo shoot now stands about forty centimetres tall out of the wet soil, a fat cone wrapped in overlapping brown hairy sheaths with dark spots, each sheath ending in a small green leaf-blade tip; raindrops beading on the sheaths; same wet leaf litter and blurred green culms behind."
+  },
+  {
+   "id": "K05",
+   "from": "K04",
+   "camera": "the camera has tilted up and pulled back a little, looking up from a low angle along the shoot.",
+   "change": "the young shoot has shot up to about four metres tall, a slender pointed column still wrapped in brown sheaths from base to tip, rising straight up between older green bamboo culms, its tip with small green sheath blades against bright canopy light."
+  },
+  {
+   "id": "K06",
+   "from": "K05",
+   "change": "most of the brown sheaths have peeled away and lie curled on the ground at its base; the new culm is revealed fresh bright green with a ring of white powder just below each node, only a few sheaths left near the top."
+  },
+  {
+   "id": "K07",
+   "from": "K06",
+   "camera": "the camera has tilted up further, now looking almost straight up the new culm toward the sky.",
+   "change": "from the upper nodes thin side branches have grown out and slender lance-shaped fresh green bamboo leaves are unfolding; the culm now reaches very high into the canopy, sunlight glowing through the young leaves."
+  },
+  {
+   "id": "K08",
+   "from": "K07",
+   "camera": "the camera has tilted back down to eye level and pulled far back.",
+   "change": "a wide view of a dense mature bamboo forest on a hillside, rows of tall green culms, soft morning mist and shafts of sunlight between them, a narrow old stone path winding through the grove into the distance, no people."
+  },
+  {
+   "id": "K09",
+   "from": "K08",
+   "camera": "the camera has moved along the stone path to the edge of the grove.",
+   "change": "beside the path stands part of an old traditional Chinese house: a whitewashed wall with grey tiled eaves and a carved wooden lattice window, slender bamboo growing right in front of the window, leaves casting soft shadows on the white wall, mist and morning light, no people."
+  },
+  {
+   "id": "K10",
+   "from": "K09",
+   "camera": "the camera has pushed in close to one leafy bamboo branch in front of the wall, macro distance, the white wall now a soft blur behind.",
+   "change": "the bamboo branch is flowering: dense clusters of pale yellow-green grass-like flower spikelets hang from the branch, with many long dangling cream-yellow stamens, a few bamboo leaves around, delicate and unusual."
+  },
+  {
+   "id": "K11",
+   "from": "K10",
+   "change": "the flowers have finished: the stamens are gone and the spikelets have become clusters of plump brownish-green grains like wheat or rice grains, bamboo seeds, hanging from the branch; the few leaves around have turned slightly yellow."
+  },
+  {
+   "id": "K12",
+   "from": "K11",
+   "camera": "the camera has followed the falling seeds down to the forest floor, ground-level macro close-up.",
+   "change": "brown bamboo seeds scattered on dark soil among dry yellowed bamboo leaves; several tiny fresh green bamboo seedlings with a few small narrow leaves are sprouting from the soil; behind, out of focus, faded yellowed dry bamboo culms."
+  },
+  {
+   "id": "K13",
+   "from": "K12",
+   "also": [
+    "K01"
+   ],
+   "camera": "the camera has descended below the soil surface into an underground cross-section, the same soil-profile view as image 2.",
+   "change": "a network of golden-yellow bamboo rhizomes like the one in image 2 runs sideways through dark soil and wraps around large grey rocks, connecting up to the bases of several green bamboo culms standing on a rocky slope above; a new pointed shoot bud rises from one rhizome node; the soil surface with leaf litter in the top fifth of the frame."
+  },
+  {
+   "id": "K14",
+   "from": "K13",
+   "camera": "the camera has pulled far back and slightly up, so the frame shows a whole rocky hillside in cut-away: the top half is a lush green bamboo grove on the slope in soft morning light, the bottom half is the underground cross-section beneath it.",
+   "change": "below the grove, many golden-yellow bamboo rhizomes run through the dark soil and between big grey rocks, linking every culm above into one connected network; small pointed shoot buds rising from the rhizome nodes."
+  }
+ ],
+ "segments": [
+  {
+   "id": "A",
+   "first": "K00",
+   "last": "K01",
+   "move": "The shot opens looking up at a towering bamboo grove. The camera tilts down with large amplitude at slow, steady speed, gliding down the tall green culms to the leaf-covered forest floor, then keeps descending smoothly through the ground line into a cut-away cross-section of dark soil, where a thick golden bamboo rhizome running sideways with ring-shaped nodes and hanging hair roots comes into view and settles in the middle of the frame with one tiny cream bud on its central node.",
+   "sound": "A gentle breeze through high bamboo leaves, soft creaking of bamboo culms, distant birdsong, fading to a muffled quiet underground hush."
+  },
+  {
+   "id": "B",
+   "first": "K01",
+   "last": "K02",
+   "at": "竹鞭一节一节",
+   "move": "A continuous macro time-lapse in the underground soil cross-section. The golden rhizome lies still. The tiny cream bud on the node swells, lengthens and grows into a plump cone-shaped winter bamboo shoot wrapped in overlapping light-brown hairy sheaths, its pointed tip rising toward the surface while soil grains crumble and shift around it. On the soil surface above, a thin white frost slowly spreads over the fallen leaves. The camera pans sideways with small amplitude at slow speed, keeping the growing shoot near the centre.",
+   "sound": "Muffled underground quiet, faint crumbling of soil grains, a soft winter wind above.",
+   "ease_in": false
+  },
+  {
+   "id": "C",
+   "first": "K02",
+   "last": "K03",
+   "at": "一场春雨",
+   "move": "The camera rises with medium amplitude at slow speed from the underground cross-section toward the soil surface. Spring rain begins to fall; the frost melts away and the leaves and soil turn dark and glistening wet. The pointed brown-sheathed tip of the bamboo shoot pushes upward and breaks through the soil surface, cracking the wet earth around it, and stands a few centimetres out of the ground at the centre.",
+   "sound": "Steady soft spring rain pattering on leaves and soil, water dripping, a faint cracking of wet earth as the tip breaks through.",
+   "ease_in": true,
+   "xf": 10
+  },
+  {
+   "id": "D",
+   "first": "K03",
+   "last": "K04",
+   "at": "笋身裹着",
+   "move": "Time-lapse: the bamboo shoot grows steadily upward out of the wet soil, thickening into a fat cone about forty centimetres tall wrapped in overlapping brown hairy spotted sheaths, each sheath ending in a small green blade tip; raindrops bead and roll down the sheaths. The camera lowers to ground level and pushes in with small amplitude at slow speed, keeping the shoot centred.",
+   "sound": "Light rain easing off, water drops falling from bamboo leaves, a few birds starting to sing.",
+   "ease_in": false
+  },
+  {
+   "id": "E",
+   "first": "K04",
+   "last": "K05",
+   "at": "春笋长得",
+   "move": "Fast time-lapse of the shoot shooting upward: it stretches taller and taller, node after node, still wrapped in brown sheaths, rising straight up between older green bamboo culms. The camera tilts up and pulls back with large amplitude at steady speed, following the climbing tip until the shoot stands about four metres tall against the bright canopy.",
+   "sound": "Forest morning ambience with birdsong, a soft breeze in the leaves, small creaks of growing bamboo.",
+   "ease_in": true,
+   "xf": 10
+  },
+  {
+   "id": "F",
+   "first": "K05",
+   "last": "K06",
+   "at": "笋壳一片片",
+   "move": "Time-lapse: the brown sheaths on the tall young shoot loosen one by one from the bottom upward, curl back and drop to the ground, revealing a fresh bright green culm with a ring of white powder below each node; the curled sheaths pile up at its base. The camera holds its low angle with a slight slow push in.",
+   "sound": "Dry papery rustle of sheaths falling and landing on the leaf litter, birdsong, a light breeze.",
+   "ease_in": false
+  },
+  {
+   "id": "G",
+   "first": "K06",
+   "last": "K07",
+   "at": "竹节上抽枝",
+   "move": "The camera tilts up with medium amplitude at slow speed along the new green culm toward the sky. Time-lapse: thin side branches sprout from the upper nodes and slender lance-shaped fresh green leaves unfurl along them, the culm reaching high into the canopy as sunlight glows through the young leaves.",
+   "sound": "A gentle wind high in the bamboo canopy, leaves rustling softly, birdsong.",
+   "ease_in": true,
+   "xf": 6
+  },
+  {
+   "id": "H",
+   "first": "K07",
+   "last": "K08",
+   "at": "新竹老竹",
+   "move": "The camera tilts back down and pulls back with large amplitude at slow, smooth speed, from the sunlit young leaves overhead down to eye level, revealing a wide, dense bamboo forest on a hillside with rows of tall green culms, soft morning mist drifting between them, shafts of sunlight, and a narrow old stone path winding into the distance.",
+   "sound": "Calm bamboo forest ambience: wind sighing through thousands of leaves, birdsong, a distant stream.",
+   "ease_in": false
+  },
+  {
+   "id": "I",
+   "first": "K08",
+   "last": "K09",
+   "at": "苏轼也说",
+   "move": "The camera glides forward along the stone path with medium amplitude at slow speed through the misty grove, arriving at the edge of the grove beside an old whitewashed wall with grey tiled eaves and a carved wooden lattice window, with slender bamboo growing right in front of the window and leaf shadows swaying on the white wall.",
+   "sound": "Soft wind in bamboo leaves, a few birds, quiet footsteps of nobody, only nature.",
+   "ease_in": true,
+   "xf": 10
+  },
+  {
+   "id": "J",
+   "first": "K09",
+   "last": "K10",
+   "at": "很多竹子",
+   "move": "The camera pushes in with medium amplitude at slow speed toward one leafy bamboo branch in front of the white wall until it fills the frame at macro distance, the wall melting into a soft blur. As the camera arrives, clusters of pale yellow-green grass-like flower spikelets open along the branch and long cream-yellow stamens unfold and dangle, swaying slightly.",
+   "sound": "A light breeze, leaves rustling, a faint hum of a passing bee.",
+   "ease_in": true,
+   "xf": 10
+  },
+  {
+   "id": "K",
+   "first": "K10",
+   "last": "K11",
+   "at": "花谢以后",
+   "shift": 1.28,
+   "move": "Macro time-lapse on the flowering bamboo branch: the dangling stamens wither and fall away, and the spikelets swell into plump clusters of brownish-green grains like wheat or rice, bamboo seeds, while the nearby leaves slowly turn slightly yellow. The camera drifts sideways with small amplitude at slow speed.",
+   "sound": "Quiet breeze, dry leaves rustling softly.",
+   "ease_in": false
+  },
+  {
+   "id": "L",
+   "first": "K11",
+   "last": "K12",
+   "at": "庄子说",
+   "move": "The ripe bamboo seeds loosen and fall from the branch; the camera follows them down with large amplitude at slow speed to the forest floor, where they land on dark soil among dry yellowed bamboo leaves, with faded yellow culms behind. Time-lapse: tiny fresh green bamboo seedlings sprout from the soil and unfold their first few narrow leaves.",
+   "sound": "Seeds pattering softly onto dry leaves, a quiet autumn wind, a few distant birds.",
+   "ease_in": false
+  },
+  {
+   "id": "M",
+   "first": "K12",
+   "last": "K13",
+   "at": "土里的竹鞭",
+   "move": "The camera lowers with medium amplitude at slow, steady speed, exactly like a crane moving down past the edge of a vertical cut-away soil profile: the forest floor with the fallen seeds and tiny seedlings slides gently up toward the top of the frame and stays visible as a thin strip of leaf litter along the top edge, while the clean vertical cut face of dark soil rises into view from below, sharp and in focus the whole time, revealing golden-yellow bamboo rhizomes running sideways through the soil and wrapping around large grey rocks, connected up to the bases of green bamboo culms; a new pointed bud rises from one node.",
+   "sound": "Muffled underground quiet, faint shifting of soil and stones, a soft wind above.",
+   "ease_in": true,
+   "xf": 6
+  },
+  {
+   "id": "N",
+   "first": "K13",
+   "last": "K14",
+   "at": "所以郑板桥",
+   "move": "The camera pulls back and rises with large amplitude at slow, steady speed, widening from the rhizomes and rocks to reveal a whole rocky hillside in cut-away: the lush green bamboo grove on the slope above in soft morning light, and below it the network of golden rhizomes linking every culm, threading between the big grey rocks, with small shoot buds rising from the nodes.",
+   "sound": "Wind through the whole bamboo forest, birdsong, a calm, open soundscape.",
+   "ease_in": false
+  }
+ ],
+ "captions": {
+  "style": "moyun",
+  "titles": [
+   {
+    "line": 0,
+    "text": "草"
+   },
+   {
+    "line": 1,
+    "text": "竹鞭"
+   },
+   {
+    "line": 2,
+    "text": "笋芽"
+   },
+   {
+    "line": 3,
+    "text": "冬笋"
+   },
+   {
+    "line": 4,
+    "text": "雨后春笋"
+   },
+   {
+    "line": 5,
+    "text": "箨",
+    "pinyin": "tuò"
+   },
+   {
+    "line": 7,
+    "text": "拔节"
+   },
+   {
+    "line": 9,
+    "text": "新竹"
+   },
+   {
+    "line": 11,
+    "text": "篁",
+    "pinyin": "huáng"
+   },
+   {
+    "line": 14,
+    "text": "开花",
+    "anchor": "开一次花"
+   },
+   {
+    "line": 15,
+    "text": "竹米"
+   },
+   {
+    "line": 15,
+    "text": "练实"
+   },
+   {
+    "line": 18,
+    "text": "一棵竹子"
+   }
+  ],
+  "poems": [
+   {
+    "line": 6,
+    "lines": [
+     "绿竹半含箨",
+     "新梢才出墙"
+    ],
+    "source": "唐 · 杜甫《严郑公宅同咏竹》"
+   },
+   {
+    "line": 12,
+    "lines": [
+     "独坐幽篁里",
+     "弹琴复长啸"
+    ],
+    "source": "唐 · 王维《竹里馆》"
+   },
+   {
+    "line": 13,
+    "lines": [
+     "宁可食无肉",
+     "不可居无竹"
+    ],
+    "source": "北宋 · 苏轼《於潜僧绿筠轩》"
+   },
+   {
+    "line": 16,
+    "lines": [
+     "非练实不食"
+    ],
+    "source": "战国 · 《庄子 · 秋水》"
+   },
+   {
+    "line": 19,
+    "lines": [
+     "咬定青山不放松",
+     "立根原在破岩中"
+    ],
+    "source": "清 · 郑燮《竹石》"
+   }
+  ]
+ },
+ "music": {
+  "style": "quiet traditional Chinese instrumental, solo guzheng and soft felt piano with a light bamboo flute (dizi), gentle ambient pads, calm and airy nature documentary underscore, slow 68 bpm, peaceful, spacious, no drums"
+ },
+ "mix": {
+  "bed_db": -12,
+  "sfx_db": -15
+ }
+}

@@ -1,0 +1,4 @@
+# 大字体不进 git：马善政随仓库带，其余由 doctor --fetch-fonts 从官方仓库下载并核 sha256
+*.ttf
+!MaShanZheng-Regular.ttf
+*.part

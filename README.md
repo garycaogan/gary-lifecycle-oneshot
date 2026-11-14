@@ -1,0 +1,101 @@
+# 一镜到底：万物的一生
+
+把一种植物或者动物的一辈子，拍成一个从头到尾不切的竖屏长镜头。竹鞭在土里横着走，笋芽鼓起来，一场春雨后破土，笋壳一片片落下，竹子拔节、成林、开花、结出竹米，最后回到地下的竹鞭。旁白是温柔的女声，每说到一个阶段的名字，屏幕中间出一个大字；隔几句插一句古诗，下面一行小字标出处。视频号和抖音上常见的那种「XX 的一生」自然科普片，这个 skill 从写稿到成片一条龙做出来。
+
+它是给 Claude Code、Codex 这类 Agent 用的 skill。装好以后跟 Agent 说「用 lifecycle-oneshot 做一条麦子的一生，先给我看稿子和关键帧」，它会照 `SKILL.md` 写剧本、配音、画关键帧、出片、剪辑、审片，花钱的步骤先告诉你大概多少。
+
+## 样片
+
+竹子的一生，114 秒，14 段 H3 接成一个镜头。下面的动图是整条片子 6 倍速、没有声音，带声音的原片可以下载。
+
+![竹子的一生，整条 6 倍速](docs/media/bamboo-6x.gif)
+
+有声成片：[下载 mp4](docs/media/bamboo.mp4?raw=true)（720×1280，23 MB）
+
+这条用的 15 张关键帧。第一张单独画，后面每张都在上一张图上改，只让竹子长一步或者镜头挪一下；相邻两张就是一段视频的首帧和尾帧，H3 补出中间的生长和运镜：
+
+![竹子那条的 15 张关键帧](docs/media/bamboo-keyframes.jpg)
+
+## 花多少钱、多少时间
+
+竹子那条按账本算，走通一遍的第三方花费是 18.56 元：关键帧 15 张 6.37 元，H3 出 14 段 9.18 元，豆包整条配音一遍 2.40 元，配乐和审片 0.61 元。
+
+我们第一次做的时候另外多花了 15.73 元，都是踩坑的钱。配音整条读了七遍，先试了三种语速，又为一个读错的「茎」字整条重读了四遍；H3 有一段钻进土里的镜头像被撕开，改了运镜写法又跑了两次。这些坑后来都写进了 skill：读错一个字只重读那一句，几分钱；哪段不行只重跑那一段，几毛钱。
+
+时间上，从零开始调这个 skill，到复刻出效果不错的一条，我们花了一个小时。之后再做一条，最慢的是 H3：每段跑 3 到 7 分钟，各段同时提交，RunningHub 账号能同时跑几个任务，决定一共要等多久。
+
+## 要哪些 key
+
+三把 key，配乐那把可以不要：
+
+| key | 用来做什么 | 去哪拿 |
+| --- | --- | --- |
+| `EVOLINK_API_KEY` | 豆包 Seed Audio 配旁白、GPT Image 2.5 画关键帧、Gemini 3.8 Flash 审片 | [Evolink](https://evolink.ai/signup?aff=wPdV)（推荐链接）控制台的 API Keys |
+| `RUNNINGHUB_API_KEY` | MiniMax H3 首尾帧出片 | [RunningHub](https://www.runninghub.cn) 个人中心的「API 调用」 |
+| `APIMART_API_KEY` | Suno v6 出纯音乐配乐，有现成配乐就不用 | [APIMart](https://apimart.ai/register?aff=J2lV)（推荐链接）控制台的令牌管理 |
+
+逐字对时用本机的 Whisper（large-v3-turbo），不花钱。
+
+## 装
+
+要 Python 3.11 或更新。Claude Code 放 `~/.claude/skills/`，Codex 放 `.agents/skills/`：
+
+```bash
+git clone https://github.com/garycaogan/lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
+cd ~/.claude/skills/lifecycle-oneshot
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+cp .env.example .env
+```
+
+用文本编辑器打开 `.env`，把 key 填在等号后面，再自检一遍：
+
+```bash
+.venv/bin/python scripts/oneshot.py doctor --fetch-fonts
+```
+
+`doctor` 不花钱，查 Python、依赖、ffmpeg、首尾帧节点图和 key（不显示 key 本身），第一次加 `--fetch-fonts` 下载约 73 MB 的开源字幕字体。全是 ✓ 就装好了，✗ 那行后面写着怎么补。第一次配音会自动下载约 1.6 GB 的转写模型，国内连不上 Hugging Face 的话在 `.env` 里写 `HF_ENDPOINT=https://hf-mirror.com`。
+
+懒得自己敲，也可以把仓库链接丢给 Agent，让它照 `references/setup.md` 装好。Mac 自带的 Python 太旧、Windows 上的命令怎么换，都在那页里。
+
+## 一条片子怎么做出来
+
+一条片子一个项目文件夹，里面一份 `film.json` 是唯一的剧本（格式见 `references/film-format.md`，完整范例是 `examples/bamboo/film.json`）。然后按顺序跑：
+
+```bash
+.venv/bin/python scripts/oneshot.py write     --project ~/oneshot/wheat   # 列出多音字和生僻字，不花钱
+.venv/bin/python scripts/oneshot.py voice     --project ~/oneshot/wheat   # 豆包一次读完整条，Whisper 逐字对时
+.venv/bin/python scripts/oneshot.py keyframes --project ~/oneshot/wheat   # 关键帧一张接一张改出来
+.venv/bin/python scripts/oneshot.py plan      --project ~/oneshot/wheat   # 按旁白算每段的起止
+.venv/bin/python scripts/oneshot.py h3        --project ~/oneshot/wheat --dry-run   # 先看提示词，不花钱
+.venv/bin/python scripts/oneshot.py h3        --project ~/oneshot/wheat   # 各段同时出片
+.venv/bin/python scripts/oneshot.py music     --project ~/oneshot/wheat
+.venv/bin/python scripts/oneshot.py captions  --project ~/oneshot/wheat
+.venv/bin/python scripts/oneshot.py cut       --project ~/oneshot/wheat
+.venv/bin/python scripts/oneshot.py check     --project ~/oneshot/wheat
+.venv/bin/python scripts/oneshot.py cost      --project ~/oneshot/wheat
+```
+
+几处我们试出来的做法：
+
+- **首尾帧，不是参考图。** RunningHub 上 YZ金鱼 的「MiniMax H3 终极篇」工作流用的是参考图生视频，只会「参考」图，不会从图 1 开始、停在图 2。我们把那个节点换成了 ComfyUI 官方的首尾帧节点，提示词第一行写 MiniMax 官方的对齐句。竹子那条每段第一帧和最后一帧跟给定关键帧的相似度（SSIM）在 0.82 到 0.95 之间，两张关键帧互相之间只有 0.05 到 0.72，说明首尾帧真的生效了。
+- **关键帧链式编辑。** 每张都单独画，H3 只能在两个场景之间硬变形；每张在上一张上改，相邻两张只差一步，H3 补出来的就是生长和运镜。
+- **接缝处要缓起。** 段和段之间跳的不是画面，是速度：前一段在关键帧那里慢慢停下，后一段常常一开头就全速运镜。工具量每段开头的运动量，猛的段自动加 0.8 秒缓起再叠化。
+- **整条配音、只重读一句。** 整条一次读，语气才连得上；哪句读错，`fixline` 只重读那一句接回原位。Whisper 听不出声调，可疑的字用 `tone` 量音高。
+- **三种字分区。** 古诗在上、名字大字在中上、旁白短句在下三分之一，都在视频号和抖音的安全区里，工具会检查同一时刻的字有没有叠在一起。字幕有墨韵、金书、宋韵三套样式，都是 SIL OFL 的开源字体。
+
+每一步的细节和踩过的坑都在 `SKILL.md`，稿子怎么写、关键帧怎么画、首尾帧提示词怎么写在 `references/method.md`。
+
+## 验证到哪一步
+
+只有竹子这一条在 Apple 芯片的 Mac 上从写稿到成片完整跑通过。别的植物和动物还没跑过；Windows、Linux 上转写换成 faster-whisper，代码支持，但没实测。离线测试不联网、不要 key：
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## 许可
+
+代码、文档和提示词是 MIT。`workflows/h3-ultimate-fl.json` 改自 RunningHub 用户 YZ金鱼 公开的工作流[「MiniMax H3 终极篇-文武双全」](https://www.runninghub.cn/post/2109907990638850050)，版权归原作者，改了哪几处写在 `workflows/README.md`；MiniMax H3 模型遵守 [MiniMax H3 Community License](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE)。`fonts/` 里的字体都是 SIL Open Font License 1.1，授权文件跟着字体放。
+
+用 H3 照分镜出整条剧情片，看姊妹仓库 [h3-ref-video](https://github.com/garycaogan/h3-ref-video)；照着原片换人翻拍，看 [mv-swap](https://github.com/garycaogan/mv-swap)。

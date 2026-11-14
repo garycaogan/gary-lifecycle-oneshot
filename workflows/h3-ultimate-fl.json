@@ -1,0 +1,422 @@
+{
+ "49": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "None"
+  },
+  "_meta": {
+   "title": "last_frame"
+  }
+ },
+ "192": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "weight_dtype": "default",
+   "unet_name": "minimax_h3_hybrid_fl2va_ref2va_b25-49-int8.safetensors"
+  },
+  "_meta": {
+   "title": "UNET加载器"
+  }
+ },
+ "250": {
+  "class_type": "ComfyMathExpression",
+  "inputs": {
+   "expression": "max(5, round(a * 24)) + (5 - (max(5, round(a * 24)) % 17)) % 17",
+   "values.a": [
+    "259",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Math Expression"
+  }
+ },
+ "252": {
+  "class_type": "ResolutionSelector",
+  "inputs": {
+   "aspect_ratio": "9:16 (Portrait Widescreen)",
+   "megapixels": 1.5,
+   "multiple": 32
+  },
+  "_meta": {
+   "title": "分辨率选择器"
+  }
+ },
+ "253": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "vae": [
+    "36",
+    0
+   ],
+   "samples": [
+    "397",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "VAE解码"
+  }
+ },
+ "254": {
+  "class_type": "VAEDecodeAudio",
+  "inputs": {
+   "vae": [
+    "37",
+    0
+   ],
+   "samples": [
+    "397",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "VAE解码_Audio"
+  }
+ },
+ "331": {
+  "class_type": "ModelAttentionBackend",
+  "inputs": {
+   "attention": "comfy kitchen attention",
+   "model": [
+    "400",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "ModelAttentionBackend"
+  }
+ },
+ "397": {
+  "class_type": "SelfLiftH3Sampler",
+  "inputs": {
+   "upscaler_model": "h3_upscaler_lms_v0.1.safetensors",
+   "latent_image": [
+    "265",
+    1
+   ],
+   "seed": 0,
+   "upscaler_unload": true,
+   "cfg": 1,
+   "w_max": 1,
+   "transition_step": 6,
+   "positive": [
+    "265",
+    0
+   ],
+   "lowres_scale": 0.6000000000000001,
+   "sampler": [
+    "255",
+    0
+   ],
+   "negative": [
+    "328",
+    0
+   ],
+   "w_min": 0.5,
+   "rho": 0,
+   "model": [
+    "329",
+    0
+   ],
+   "vae": [
+    "36",
+    0
+   ],
+   "sigmas": [
+    "261",
+    0
+   ],
+   "highres_tiling": false
+  },
+  "_meta": {
+   "title": "SelfLift Progressive Sampler (MiniMax H3)"
+  }
+ },
+ "255": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  },
+  "_meta": {
+   "title": "K采样器选择"
+  }
+ },
+ "332": {
+  "class_type": "BlockSparseAttention",
+  "inputs": {
+   "selection": "sol-attn",
+   "extra_tokens": 256,
+   "selection.tau": 1.3,
+   "dense_blocks": "",
+   "start_percent": 0.2,
+   "model": [
+    "331",
+    0
+   ],
+   "end_percent": 1,
+   "sink_conditioning": "exact_kv_and_rows",
+   "min_tokens": 12288,
+   "verbose": true
+  },
+  "_meta": {
+   "title": "Model Sparse Attention"
+  }
+ },
+ "333": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "shift_audio": 3.0000000000000004,
+   "shift_video": 12,
+   "model": [
+    "332",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "ModelSamplingMiniMaxH3"
+  }
+ },
+ "259": {
+  "class_type": "PrimitiveFloat",
+  "inputs": {
+   "value": 12
+  },
+  "_meta": {
+   "title": "视频时长（秒）"
+  }
+ },
+ "51": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "None"
+  },
+  "_meta": {
+   "title": "first_frame"
+  }
+ },
+ "53": {
+  "class_type": "LoraLoaderModelOnly",
+  "inputs": {
+   "lora_name": "minimax_h3_dmad_full_dareties_v4_step600_comfy_fro.safetensors",
+   "strength_model": 0.8000000000000002,
+   "model": [
+    "192",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "LoRA加载器(仅模型)"
+  }
+ },
+ "36": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+  },
+  "_meta": {
+   "title": "VAE加载器"
+  }
+ },
+ "37": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+  },
+  "_meta": {
+   "title": "VAE加载器"
+  }
+ },
+ "38": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_ultra_uncensored_heretic_int8_convrot.safetensors",
+   "type": "minimax",
+   "device": "default"
+  },
+  "_meta": {
+   "title": "CLIP加载器"
+  }
+ },
+ "261": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "scheduler": "simple",
+   "denoise": 1,
+   "model": [
+    "329",
+    0
+   ],
+   "steps": 12
+  },
+  "_meta": {
+   "title": "基础调度器"
+  }
+ },
+ "263": {
+  "class_type": "Text",
+  "inputs": {
+   "text": ""
+  },
+  "_meta": {
+   "title": "文本"
+  }
+ },
+ "363": {
+  "class_type": "忽略多组孤海",
+  "inputs": {},
+  "_meta": {
+   "title": "忽略多组 孤海"
+  }
+ },
+ "265": {
+  "class_type": "MiniMaxH3ImageToVideo",
+  "_meta": {
+   "title": "MiniMax H3 Image to Video (FL2VA)"
+  },
+  "inputs": {
+   "clip": [
+    "38",
+    0
+   ],
+   "vae": [
+    "36",
+    0
+   ],
+   "prompt": [
+    "263",
+    0
+   ],
+   "width": [
+    "252",
+    0
+   ],
+   "height": [
+    "252",
+    1
+   ],
+   "length": [
+    "250",
+    1
+   ],
+   "first_frame": [
+    "51",
+    0
+   ],
+   "last_frame": [
+    "49",
+    0
+   ]
+  }
+ },
+ "364": {
+  "class_type": "VHS_VideoCombine",
+  "inputs": {
+   "images": [
+    "253",
+    0
+   ],
+   "pix_fmt": "yuv420p",
+   "format": "video/h264-mp4",
+   "frame_rate": 24,
+   "pingpong": false,
+   "save_output": true,
+   "filename_prefix": "YZ_H3_",
+   "loop_count": 0,
+   "save_metadata": true,
+   "crf": 19,
+   "trim_to_audio": false,
+   "no_preview": false,
+   "audio": [
+    "254",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "合并为视频"
+  }
+ },
+ "400": {
+  "class_type": "LoraLoaderModelOnly",
+  "inputs": {
+   "lora_name": "MysticXXX_MMH3-V1.safetensors",
+   "strength_model": 0.3500000000000001,
+   "model": [
+    "53",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "LoRA加载器(仅模型)"
+  }
+ },
+ "401": {
+  "class_type": "MiniMaxChunkFeedForward",
+  "inputs": {
+   "chunks": 2,
+   "model": [
+    "333",
+    0
+   ],
+   "seq_threshold": 4096
+  },
+  "_meta": {
+   "title": "MiniMax H3 ChunkFeedForward"
+  }
+ },
+ "328": {
+  "class_type": "ConditioningZeroOut",
+  "inputs": {
+   "conditioning": [
+    "265",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "条件零化"
+  }
+ },
+ "307": {
+  "class_type": "忽略多组孤海",
+  "inputs": {},
+  "_meta": {
+   "title": "忽略多组 孤海"
+  }
+ },
+ "329": {
+  "class_type": "ModelPreviewOverrideKJ",
+  "inputs": {
+   "preview_frames": 1024,
+   "suppress_default_preview": true,
+   "jpeg_quality": 80,
+   "tiny_vae": "taeh3.safetensors",
+   "model": [
+    "401",
+    0
+   ],
+   "vae": [
+    "36",
+    0
+   ],
+   "preview_fps": 12,
+   "max_resolution": 1024
+  },
+  "_meta": {
+   "title": "Model Preview Override KJ"
+  }
+ },
+ "308": {
+  "class_type": "忽略多组孤海",
+  "inputs": {},
+  "_meta": {
+   "title": "忽略多组 孤海"
+  }
+ },
+ "309": {
+  "class_type": "忽略多组孤海",
+  "inputs": {},
+  "_meta": {
+   "title": "忽略多组 孤海"
+  }
+ }
+}

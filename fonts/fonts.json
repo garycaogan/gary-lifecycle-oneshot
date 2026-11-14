@@ -1,0 +1,60 @@
+{
+ "_note": "字幕用的开源字体，全部 SIL Open Font License 1.1（可商用，授权文件跟着字体放在这里）。马善政随包带；其余体积大，doctor --fetch-fonts 从官方仓库下载并核大小和 sha256。",
+ "fonts": [
+  {
+   "file": "MaShanZheng-Regular.ttf",
+   "name": "马善政毛笔楷书 Ma Shan Zheng",
+   "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/mashanzheng/MaShanZheng-Regular.ttf",
+   "license": "SIL OFL 1.1",
+   "license_file": "MaShanZheng_OFL.txt",
+   "use": "墨韵大标题",
+   "bundled": true,
+   "size": 5857936,
+   "sha256": "6d2546bb189c732a8ca29af9e22457b152387d158aa459e4ac2ce1e51788b7fb"
+  },
+  {
+   "file": "ZhiMangXing-Regular.ttf",
+   "name": "志莽行书 Zhi Mang Xing",
+   "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/zhimangxing/ZhiMangXing-Regular.ttf",
+   "license": "SIL OFL 1.1",
+   "license_file": "ZhiMangXing_OFL.txt",
+   "use": "金书大标题",
+   "bundled": false,
+   "size": 4063532,
+   "sha256": "644e0cae9b40f0b10ab729a01bd32032e3973bac22be3dccae01bf6ae7fde969"
+  },
+  {
+   "file": "LXGWWenKai-Medium.ttf",
+   "name": "霞鹜文楷 LXGW WenKai Medium v1.530",
+   "url": "https://github.com/lxgw/LxgwWenKai/releases/download/v1.530/LXGWWenKai-Medium.ttf",
+   "license": "SIL OFL 1.1",
+   "license_file": "LXGWWenKai_OFL.txt",
+   "use": "墨韵、宋韵古诗",
+   "bundled": false,
+   "size": 25800076,
+   "sha256": "f4b8a34d1f838fe411540cb7c97b1c384ac9738a876c4104500bc42508b2312a"
+  },
+  {
+   "file": "NotoSansSC-VF.ttf",
+   "name": "思源黑体 Noto Sans SC（可变字重）",
+   "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+   "license": "SIL OFL 1.1",
+   "license_file": "NotoSansSC_OFL.txt",
+   "use": "旁白字幕、拼音",
+   "bundled": false,
+   "size": 17772300,
+   "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+  },
+  {
+   "file": "NotoSerifSC-VF.ttf",
+   "name": "思源宋体 Noto Serif SC（可变字重）",
+   "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifsc/NotoSerifSC%5Bwght%5D.ttf",
+   "license": "SIL OFL 1.1",
+   "license_file": "NotoSerifSC_OFL.txt",
+   "use": "出处、金书古诗、宋韵标题",
+   "bundled": false,
+   "size": 25125512,
+   "sha256": "050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9"
+  }
+ ]
+}
