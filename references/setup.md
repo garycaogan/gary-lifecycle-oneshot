@@ -7,7 +7,7 @@
 从 GitHub 克隆到放 skill 的地方，Claude Code 放 `~/.claude/skills/`（只给一个项目用就放项目里的 `.claude/skills/`），Codex 放 `.agents/skills/`：
 
 ```bash
-git clone https://github.com/garycaogan/lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
+git clone https://github.com/garycaogan/gary-lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
 ```
 
 后面的命令都在这个文件夹里执行。

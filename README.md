@@ -41,7 +41,7 @@
 要 Python 3.11 或更新。Claude Code 放 `~/.claude/skills/`，Codex 放 `.agents/skills/`：
 
 ```bash
-git clone https://github.com/garycaogan/lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
+git clone https://github.com/garycaogan/gary-lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
 cd ~/.claude/skills/lifecycle-oneshot
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
@@ -98,4 +98,4 @@ python -m unittest discover -s tests -v
 
 代码、文档和提示词是 MIT。`workflows/h3-ultimate-fl.json` 改自 RunningHub 用户 YZ金鱼 公开的工作流[「MiniMax H3 终极篇-文武双全」](https://www.runninghub.cn/post/2109907990638850050)，版权归原作者，改了哪几处写在 `workflows/README.md`；MiniMax H3 模型遵守 [MiniMax H3 Community License](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE)。`fonts/` 里的字体都是 SIL Open Font License 1.1，授权文件跟着字体放。
 
-用 H3 照分镜出整条剧情片，看姊妹仓库 [h3-ref-video](https://github.com/garycaogan/h3-ref-video)；照着原片换人翻拍，看 [mv-swap](https://github.com/garycaogan/mv-swap)。
+用 H3 照分镜出整条剧情片，看姊妹仓库 [h3-ref-video](https://github.com/garycaogan/gary-h3-ref-video)；照着原片换人翻拍，看 [mv-swap](https://github.com/garycaogan/gary-mv-swap)。
