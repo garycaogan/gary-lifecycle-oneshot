@@ -10,6 +10,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import urllib.request
 import wave
 from pathlib import Path
 
@@ -210,9 +211,125 @@ def audio_16k(path):
     return np.frombuffer(raw, np.int16).astype(np.float32) / 32768.0
 
 
+def cloud_whisper():
+    """Whisper on Google Cloud (hf-cloud-render/whisper). A machine with ~/.config/whisper-cloud/config.json sends its
+    audio there and keeps its own memory free; a machine without that file transcribes locally as before.
+    WHISPER_BACKEND=local forces local, =cloud forces the cloud (an error without the file). Returns a function with
+    mlx_whisper.transcribe's arguments and result, or None for local. A cloud failure stops with the reason: it never
+    turns into a local run by itself."""
+    import importlib.util, json as _json, os as _os
+    from pathlib import Path as _Path
+    mode = _os.environ.get("WHISPER_BACKEND", "").strip().lower()
+    if mode == "local":
+        return None
+    cfg = _Path(_os.environ.get("WHISPER_CLOUD_CONFIG") or _Path.home() / ".config" / "whisper-cloud" / "config.json")
+    if not cfg.expanduser().exists():
+        if mode == "cloud":
+            raise SystemExit(f"WHISPER_BACKEND=cloud，但这台机器没有云端 Whisper 配置（{cfg}）")
+        return None
+    cfg = cfg.expanduser()
+    try:
+        client = _Path(_json.loads(cfg.read_text(encoding="utf-8")).get("client") or cfg.parent / "whisper_cloud.py")
+        spec = importlib.util.spec_from_file_location("whisper_cloud", client)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        raise SystemExit(f"云端 Whisper 客户端载入失败（{cfg}：{e}）；要用本机转写，设 WHISPER_BACKEND=local") from None
+
+    def run(audio, **kw):
+        try:
+            return mod.transcribe(audio if not isinstance(audio, _Path) else str(audio), **kw)
+        except mod.WhisperCloudError as e:
+            raise SystemExit(f"云端 Whisper 失败：{e}。要改用本机转写，设 WHISPER_BACKEND=local 再跑") from None
+    return run
+
+
 def asr():
+    """Which transcriber runs here: "cloud" (cloud_whisper), mlx_whisper, faster_whisper, or None."""
     import importlib.util
+    if cloud_whisper():
+        return "cloud"
     return next((m for m in ("mlx_whisper", "faster_whisper") if importlib.util.find_spec(m)), None)
+
+
+def hf_endpoint():
+    """The transcription model comes from Hugging Face the first time. Where huggingface.co does not answer within a few
+    seconds (mainland China, a member's computer in the 一句话复刻 test 11/26 died here), use hf-mirror.com instead,
+    before huggingface_hub is imported (it reads HF_ENDPOINT once). An HF_ENDPOINT already set is left alone."""
+    if os.environ.get("HF_ENDPOINT"):
+        return
+    try:
+        urllib.request.urlopen(urllib.request.Request("https://huggingface.co/api/models/mlx-community/whisper-large-v3-turbo",
+                                                      headers={"User-Agent": UA}), timeout=5).read(64)
+    except Exception:
+        os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+        print("huggingface.co 连不上，转写模型改从 hf-mirror.com 下载", flush=True)
+
+
+MLX_REPO = "mlx-community/whisper-large-v3-turbo"
+
+
+def _hf_hub_dir():
+    if os.environ.get("HF_HUB_CACHE"):
+        return Path(os.environ["HF_HUB_CACHE"]).expanduser()
+    return Path(os.environ.get("HF_HOME") or Path.home() / ".cache" / "huggingface").expanduser() / "hub"
+
+
+def model_cached(hub=None):
+    """Is the Apple-silicon transcription model already on disk (no network, no huggingface_hub import)?"""
+    snap = (hub or _hf_hub_dir()) / ("models--" + MLX_REPO.replace("/", "--")) / "snapshots"
+    return snap.is_dir() and any(any(d.iterdir()) for d in snap.iterdir() if d.is_dir())
+
+
+def _writable(d):
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+        t = d / f".oneshot_write_test_{os.getpid()}"
+        t.write_text("x")
+        t.unlink()
+        return True
+    except OSError:
+        return False
+
+
+def model_home(near):
+    """Agent harnesses that sandbox shell commands to the workspace (DeepSeek Harness's default 「工作区内修改」, Codex)
+    can't write ~/.cache, so a first-time download of the 1.6 GB model dies there. If the model isn't cached and the cache
+    isn't writable, download it next to the project instead (<project's parent>/.oneshot-models), once per workspace.
+    Call before huggingface_hub / mlx_whisper / faster_whisper are imported."""
+    if os.environ.get("ONESHOT_NO_MODEL_HOME"):
+        return
+    hub = _hf_hub_dir()
+    if asr() == "mlx_whisper" and model_cached(hub):
+        return
+    if _writable(hub):
+        return
+    p = Path(near).resolve()
+    proj = next((q for q in [p, *p.parents] if (q / "film.json").exists()), p.parent)
+    home = proj.parent / ".oneshot-models"
+    os.environ["HF_HOME"] = str(home)
+    os.environ.pop("HF_HUB_CACHE", None)
+    if not model_cached(home / "hub"):
+        print(f"{hub} 写不进去（沙盒只放行工作区），转写模型改下到 {home}（约 1.6 GB，同一个工作区只下一次）；"
+              "想省掉这次下载，在自己的终端里先跑 doctor --fetch-model", flush=True)
+
+
+def fetch_model():
+    """Download the transcription model now, in the user's own terminal (no sandbox), so the first voice-over inside an
+    agent doesn't have to."""
+    engine = asr()
+    if engine in (None, "cloud"):
+        print("这台机器不用本机转写模型" if engine == "cloud" else "没装转写，先装 requirements.txt")
+        return
+    hf_endpoint()
+    if engine == "mlx_whisper":
+        from huggingface_hub import snapshot_download
+        print(f"下载转写模型 {MLX_REPO}（约 1.6 GB）…", flush=True)
+        snapshot_download(MLX_REPO)
+    else:
+        from faster_whisper import WhisperModel
+        WhisperModel(os.environ.get("ONESHOT_WHISPER_MODEL", "large-v3-turbo"), device="auto", compute_type="auto")
+    print("转写模型已就绪")
 
 
 def whisper_zh(path, prompt="以下是普通话的句子。"):
@@ -221,10 +338,14 @@ def whisper_zh(path, prompt="以下是普通话的句子。"):
     engine = asr()
     if not engine:
         raise SystemExit("没装转写：Apple 芯片的 Mac 装 mlx-whisper，其他电脑装 faster-whisper（见 references/setup.md）")
+    if engine == "cloud":
+        return cloud_whisper()(str(path), language="zh", word_timestamps=True, initial_prompt=prompt)
+    model_home(path)
     audio = audio_16k(path)
+    hf_endpoint()
     if engine == "mlx_whisper":
         import mlx_whisper
-        return mlx_whisper.transcribe(audio, path_or_hf_repo="mlx-community/whisper-large-v3-turbo", language="zh",
+        return mlx_whisper.transcribe(audio, path_or_hf_repo=MLX_REPO, language="zh",
                                       word_timestamps=True, initial_prompt=prompt)
     from faster_whisper import WhisperModel
     model = WhisperModel(os.environ.get("ONESHOT_WHISPER_MODEL", "large-v3-turbo"), device="auto", compute_type="auto")

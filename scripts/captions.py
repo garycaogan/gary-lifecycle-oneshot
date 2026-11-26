@@ -21,6 +21,7 @@ POEM_Y = (330, 445)          # centres of poem line 1 / line 2; the source sits 
 TITLE_Y = 820                # centre of the keyword title; pinyin above it
 SUB_Y = 1380                 # centre of the narration phrases
 BAND = (1250, 1530)          # faint dark gradient behind the narration zone, on every frame
+TITLE_HOLD = 1.5             # 叫法: how long a title holds the narration slot (s)
 
 # Every style draws solid opaque dark strokes plus a soft shadow: the white type must stay readable on sunlit leaves,
 # white walls and sky (the first cut of the bamboo film used a 2 px half-transparent stroke and was unreadable there).
@@ -43,6 +44,15 @@ STYLES = {
                 "title_fill": (255, 255, 255), "poem_fill": (255, 246, 214), "sub_fill": (255, 246, 214),
                 "src_fill": (255, 246, 214), "stroke": (20, 20, 20), "title_px": {1: 230, 2: 190, 3: 170, 4: 150},
                 "title_stroke": 8, "poem_px": 90, "poem_stroke": 6, "sub_px": 66, "sub_stroke": 6},
+    # 叫法 (the look of the 1M-like 《水的叫法》 short): extra-black slanted sans narration in white with a hard drop shadow, no stroke, no
+    # band; single-word heavy songti titles at the same height that replace the narration while they show, fading in
+    # with a warm glow and a thin rule under them. Poems (if any) keep the top zone.
+    "jiaofa": {"title": ("NotoSerifSC-VF.ttf", 900), "poem": ("NotoSerifSC-VF.ttf", 900),
+               "sub": ("NotoSansSC-VF.ttf", 900), "src": ("NotoSerifSC-VF.ttf", 700),
+               "title_fill": (255, 255, 255), "poem_fill": (255, 255, 255), "sub_fill": (255, 255, 255),
+               "src_fill": (255, 255, 255), "stroke": (20, 20, 20), "title_px": {1: 180, 2: 160, 3: 140, 4: 125},
+               "title_stroke": 0, "poem_px": 84, "poem_stroke": 5, "sub_px": 64, "sub_stroke": 0,
+               "layout": "jiaofa", "sub_y": 1182, "title_y": 1188, "skew": 0.2, "band": False},
 }
 
 
@@ -79,10 +89,13 @@ class Timing:
 
 
 class Layer:
-    """Text items drawn with an opaque stroke over a soft drop shadow."""
+    """Text items drawn with an opaque stroke over a soft drop shadow (or, with `hard`, a crisp offset shadow and no
+    stroke; `skew` slants the whole layer like an italic around its own baseline; `glow` adds a warm halo and `rule` a
+    thin line under the text, both scaled by `glow`, and `alpha` fades the whole layer)."""
 
-    def __init__(self, st):
+    def __init__(self, st, hard=False, skew=0.0, glow=0.0, rule=None, alpha=1.0, shadow=1):
         self.st, self.items = st, []
+        self.hard, self.skew, self.glow, self.rule, self.alpha, self.shadow = hard, skew, glow, rule, alpha, shadow
 
     def text(self, centre, s, f, fill, stroke, spacing=0):
         d = ImageDraw.Draw(Image.new("L", (1, 1)))
@@ -99,12 +112,38 @@ class Layer:
                 pos.append((x, ch))
                 x += dt.textlength(ch, font=f) + spacing
             for x, t in pos:
-                ds.text((x, y), t, font=f, fill=(0, 0, 0, 200), anchor="lm", stroke_width=stroke + 2, stroke_fill=(0, 0, 0, 200))
+                sw = stroke if self.hard else stroke + 2
+                ds.text((x, y), t, font=f, fill=(0, 0, 0, 200), anchor="lm", stroke_width=sw, stroke_fill=(0, 0, 0, 200))
                 dt.text((x, y), t, font=f, fill=fill + (255,), anchor="lm", stroke_width=stroke, stroke_fill=self.st["stroke"] + (255,))
-        bbox = txt.getbbox()
         out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        out.alpha_composite(sh.filter(ImageFilter.GaussianBlur(7)), (3, 5))
+        if self.hard:
+            a = sh.getchannel("A").point(lambda v: v * 170 // 200)
+            hard = Image.new("RGBA", (W, H), (10, 10, 10, 0))
+            hard.putalpha(a)
+            out.alpha_composite(hard, (4, 4))
+        else:
+            soft = sh.filter(ImageFilter.GaussianBlur(7))
+            for _ in range(self.shadow):   # 叫法 titles: twice, so white type holds on white water and sky
+                out.alpha_composite(soft, (3, 5))
+        if self.glow > 0:
+            halo = Image.new("RGBA", (W, H), (255, 226, 170, 0))
+            halo.putalpha(txt.getchannel("A").filter(ImageFilter.GaussianBlur(16)).point(lambda v: min(255, int(v * 1.6 * self.glow))))
+            out.alpha_composite(halo)
+            if self.rule:
+                cx, y, half = self.rule
+                line = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+                ld = ImageDraw.Draw(line)
+                for x in range(int(cx - half), int(cx + half)):
+                    u = 1 - abs(x - cx) / half
+                    ld.line([(x, y - 1), (x, y + 1)], fill=(255, 240, 210, int(235 * min(1, u * 2.5) * self.glow)))
+                out.alpha_composite(line.filter(ImageFilter.GaussianBlur(0.8)))
         out.alpha_composite(txt)
+        if self.skew:
+            yc = self.items[0][1] if self.items else H / 2
+            out = out.transform((W, H), Image.AFFINE, (1, self.skew, -self.skew * yc, 0, 1, 0), resample=Image.BICUBIC)
+        if self.alpha < 1:
+            out.putalpha(out.getchannel("A").point(lambda v: int(v * self.alpha)))
+        bbox = out.getchannel("A").point(lambda v: 255 if v > 24 else 0).getbbox()
         return out, bbox
 
 
@@ -140,25 +179,61 @@ def build(pj, style=None):
             s, e = tm.at(L["i"], ph)
             phrases.append([ph.strip(), s, e])
     meas = ImageDraw.Draw(Image.new("L", (1, 1)))
-    for k, (ph, s, e) in enumerate(phrases):
-        nxt = phrases[k + 1][1] - 0.05 if k + 1 < len(phrases) else end   # = the next phrase's t0
-        size = st["sub_px"]
-        while meas.textlength(ph, font=font(st["sub"], size)) > SAFE[2] - SAFE[0] - 20 - 2 * st["sub_stroke"]:
-            size -= 2
-        lay = Layer(st)
-        lay.text((W / 2, SUB_Y), ph, font(st["sub"], size), st["sub_fill"], st["sub_stroke"])
-        save(lay, f"sub{k:03d}", s - 0.05, min(nxt, e + 0.5), "sub", ph)
-
-    # 2. keyword titles; a title leaves before the next title or a poem comes in
+    jiaofa = st.get("layout") == "jiaofa"
+    sub_y, title_y = st.get("sub_y", SUB_Y), st.get("title_y", TITLE_Y)
     poem_starts = [tm.at(po["line"], po["lines"][0])[0] - 0.15 for po in poems]
     seen, starts = {}, []
     for t in titles:
         n = seen.get((t["line"], t.get("anchor") or t["text"]), 0)
         seen[(t["line"], t.get("anchor") or t["text"])] = n + 1
         starts.append(tm.at(t["line"], t.get("anchor") or t["text"], n)[0])
+    # 叫法: a title owns the narration slot from its start to TITLE_HOLD later (or the next title); narration around it
+    # is cut back (ends when the title comes in, or starts when it leaves) and dropped if too little of it is left.
+    windows = []
+    if jiaofa:
+        for k, s0 in enumerate(starts):
+            nxt = starts[k + 1] - 0.1 if k + 1 < len(starts) else end
+            windows.append((s0 - 0.1, min(s0 + TITLE_HOLD, nxt, end)))
+    for k, (ph, s, e) in enumerate(phrases):
+        nxt = phrases[k + 1][1] - 0.05 if k + 1 < len(phrases) else end   # = the next phrase's t0
+        t0, t1 = s - 0.05, (nxt if jiaofa else min(nxt, e + 0.5))
+        for w0, w1 in windows:
+            if t0 < w1 and w0 < t1:
+                if t0 >= w0:
+                    t0 = w1
+                else:
+                    t1 = min(t1, w0)
+        if t1 - t0 < 0.3:
+            continue
+        size = st["sub_px"]
+        while meas.textlength(ph, font=font(st["sub"], size)) > SAFE[2] - SAFE[0] - 40 - 2 * st["sub_stroke"]:
+            size -= 2
+        lay = Layer(st, hard=jiaofa, skew=st.get("skew", 0))
+        lay.text((W / 2, sub_y), ph, font(st["sub"], size), st["sub_fill"], st["sub_stroke"])
+        save(lay, f"sub{k:03d}", t0, t1, "sub", ph)
+
+    # 2. keyword titles; a title leaves before the next title or a poem comes in
     for k, t in enumerate(titles):
         s = starts[k]
         nxt = [x for x in starts[k + 1:k + 2]]
+        if jiaofa:
+            word = t["text"]
+            size = st["title_px"].get(len(word), max(110, 680 // max(1, len(word))))
+            f = font(st["title"], size)
+            w0, w1 = windows[k]
+            # fade in over 0.4 s with the glow and the rule, hold the glow 0.3 s, let it go in 0.2 s, then plain
+            states = [(0.2, 1.0), (0.4, 1.0), (0.6, 1.0), (0.8, 1.0), (1.0, 1.0), (1.0, 1.0), (1.0, 0.55), (1.0, 0.0)]
+            steps = [0.08] * 5 + [0.3, 0.1, None]
+            t0 = w0
+            for j, ((alpha, glow), dt) in enumerate(zip(states, steps)):
+                t1 = w1 if dt is None else min(w1, t0 + dt)
+                if t1 - t0 < 1e-3:
+                    break
+                lay = Layer(st, glow=glow, rule=(W / 2, title_y + size * 0.62, 150), alpha=alpha, shadow=2)
+                lay.text((W / 2, title_y), word, f, st["title_fill"], st["title_stroke"])
+                save(lay, f"title{k:02d}_{j}", t0, t1, "title", word)
+                t0 = t1
+            continue
         t1 = min([s + 2.6, (nxt[0] - 0.1) if nxt else 1e9] + [p - 0.1 for p in poem_starts if p > s])
         word = t["text"]
         size = st["title_px"].get(len(word), max(110, 680 // max(1, len(word))))
@@ -167,9 +242,9 @@ def build(pj, style=None):
             size -= 6
             f = font(st["title"], size)
         lay = Layer(st)
-        lay.text((W / 2, TITLE_Y), word, f, st["title_fill"], st["title_stroke"])
+        lay.text((W / 2, title_y), word, f, st["title_fill"], st["title_stroke"])
         if t.get("pinyin"):
-            lay.text((W / 2, TITLE_Y - size * 0.5 - 60), t["pinyin"], font(st["sub"], 60), st["title_fill"], 5, spacing=6)
+            lay.text((W / 2, title_y - size * 0.5 - 60), t["pinyin"], font(st["sub"], 60), st["title_fill"], 5, spacing=6)
         save(lay, f"title{k:02d}", s - 0.1, t1, "title", word)
 
     # 3. poems: line 1 appears as it is read, line 2 joins it, the source sits under the last line
@@ -192,7 +267,7 @@ def build(pj, style=None):
 
     band = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     bd = ImageDraw.Draw(band)
-    for y in range(*BAND):
+    for y in range(*BAND) if st.get("band", True) else ():
         u = (y - BAND[0]) / (BAND[1] - BAND[0])
         bd.line([(0, y), (W, y)], fill=(0, 0, 0, int(95 * (1 - abs(2 * u - 1)) ** 0.8)))
     band.save(out_dir / "band.png")

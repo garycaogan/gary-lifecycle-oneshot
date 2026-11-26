@@ -1,7 +1,7 @@
 """一镜到底：万物的一生 — a Chinese vertical science short in which one plant (or animal) lives its whole life cycle in
 one continuous shot. One project folder per film; its film.json is the only source of truth. Steps, in order:
 
-    oneshot.py doctor [--fetch-fonts]            # Python, packages, ffmpeg, fonts, keys; --fetch-fonts downloads fonts
+    oneshot.py doctor [--fetch-fonts] [--fetch-model]  # Python, packages, ffmpeg, fonts, keys; downloads fonts / the transcription model
     oneshot.py write    --project P              # the agent writes film.json itself (no API); prints the checklist
     oneshot.py voice    --project P [--takes 1] [--use rec.wav]   # Doubao reads the whole script (or align your own
                                                  # recording) → voice/voice.wav + chars.json + lines.json
@@ -163,7 +163,7 @@ def voice_body(pj, text):
     for k, val in (v.get("speak") or {}).items():
         text = text.replace(k, val)
     return {"model": v.get("model", "doubao-seed-audio-1-0"), "format": "wav", "sample_rate": 48000,
-            "speech_rate": v.get("speech_rate", 1.07), "prompt": v["direction"].rstrip() + "她说：" + text}
+            "speech_rate": v.get("speech_rate", 1.07), "prompt": v["direction"].rstrip() + v.get("says", "她说：") + text}
 
 
 def transcribe(pj, wav):
@@ -223,12 +223,33 @@ def finish_voice(pj, raw):
     return ratio, end
 
 
+def fit_take(pj, f, cps):
+    """voice.fit_cps: a take read too fast or too slow is time-stretched (pitch kept, ffmpeg atempo) to the middle of
+    target_cps instead of paying for another take. Doubao's speech_rate is no dial: the same 0.66 read the 水 script in
+    93 s with one wording of the direction and in 140 s with another. Only within 0.7–1.45×; beyond that, read again."""
+    lo, hi = pj.film["voice"].get("target_cps", [3.0, 3.5])
+    if not pj.film["voice"].get("fit_cps") or lo <= cps <= hi:
+        return f
+    factor = round((lo + hi) / 2 / cps, 3)
+    if not 0.7 <= factor <= 1.45:
+        print(f"语速 {cps} 字/秒离目标太远（要拉 {factor} 倍），不硬拉：调 speech_rate 再读一条")
+        return f
+    out = Path(f).with_name(Path(f).stem + "_fit.wav")
+    ff("-i", f, "-af", f"atempo={factor}", "-ar", 48000, out)
+    print(f"{Path(f).name} 语速 {cps} 字/秒 → 按 {factor} 倍变速（音高不变）到约 {round(cps * factor, 2)} 字/秒：{out.name}")
+    return out
+
+
 def cmd_voice(pj, a):
     """Doubao Seed Audio reads the whole script in one call (the read only flows when it is one call). It bills by the
     length of the audio: a 110 s take is about ¥2.4. One take is usually enough; a misread sentence is fixed with
     `fixline`, not by reading the whole thing again."""
     if a.use:   # an existing recording (your own read, or a take from before): align it, no API call
-        ratio, end = finish_voice(pj, Path(a.use).resolve())
+        src = Path(a.use).resolve()
+        if pj.film["voice"].get("fit_cps"):
+            _, _, _, e0 = align(pj, src)
+            src = fit_take(pj, src, round(len(norm("".join(pj.film["script"]))) / max(e0, 1), 2))
+        ratio, end = finish_voice(pj, src)
         print("用现成录音", a.use, "对稿", ratio, "→ voice/voice.wav", round(dur(pj.p("voice/voice.wav")), 1), "秒")
         return
     cmd_write(pj, argparse.Namespace())   # prints the polyphone / rare-character list once more before paying
@@ -257,10 +278,17 @@ def cmd_voice(pj, a):
         print(f.name, "对稿", ratio, "时长", round(end, 1), "秒", "语速", round(cps, 2), "字/秒")
     rows.sort(key=lambda r: -r[0])
     best = rows[0]
+    fitted = fit_take(pj, best[1], best[4])
+    if fitted != best[1]:
+        _, _, r2, e2 = align(pj, fitted)
+        best = (best[0], fitted, r2, round(e2, 1), round(len(norm(text)) / max(e2, 1), 2))
     ratio, end = finish_voice(pj, best[1])
     print("用", best[1].name, "→ voice/voice.wav", round(dur(pj.p("voice/voice.wav")), 1), "秒")
     if not lo <= best[4] <= hi:
-        print(f"语速 {best[4]} 字/秒不在 {lo}–{hi}：改 voice.speech_rate 再出一条（1.0 约 3.0 字/秒，1.07 约 3.2，1.15 约 3.7）")
+        rate = pj.film["voice"].get("speech_rate", 1.07)
+        want = round(rate * (lo + hi) / 2 / best[4], 2)
+        print(f"语速 {best[4]} 字/秒不在 {lo}–{hi}：把 voice.speech_rate 从 {rate} 改成 {want} 左右再出一条（字速大致和它成正比，"
+              "但同一个数在不同的表演要求下快慢差很多：竹子那条温柔女声 1.07 约 3.2 字/秒，水那条男孩声 1.15 读到了 5.9 字/秒、0.62 是 3.5）")
     print("Whisper 对稿率低于 0.9 多半是同音字（唾/箨、黄/篁），逐句看 voice/lines.json；可疑的字用 tone 量声调，读错的句子用 fixline 重读。")
 
 
@@ -369,8 +397,9 @@ def cmd_keyframes(pj, a):
         if k.get("from"):
             refs = [e.upload(h3jpg(pj, k["from"]))] + [e.upload(h3jpg(pj, r)) for r in k.get("also", [])]
             if k.get("camera"):
-                prompt = ("Image 1 is the previous moment of the same continuous documentary shot. Keep the same place, the "
-                          "same plants, lighting, colour grade and photographic look as image 1; the camera has now moved: "
+                prompt = ("Image 1 is the previous moment of the same continuous shot. Keep the same place, the same "
+                          "plants, characters and props, lighting, colour grade and visual style as image 1; the camera has "
+                          "now moved: "
                           + k["camera"] + " What the new frame shows: " + k["change"] + " " + look)
             else:
                 prompt = ("Edit image 1. Keep exactly the same camera position, lens, framing, lighting, background and "
@@ -434,10 +463,14 @@ def cmd_plan(pj, a):
 
 # ------------------------------------------------------------------ h3
 
+SHOT = "One single continuous photorealistic nature-documentary shot, no cuts."
+LIGHT = "Natural soft daylight and a consistent true-to-life colour grade throughout; every change happens gradually and smoothly."
+
+
 def h3_body(pj, seg):
-    return ("integrated_multimodal_description: [Shot 1] One single continuous photorealistic nature-documentary shot, no "
-            "cuts. " + seg["move"].strip() + " Natural soft daylight and a consistent true-to-life colour grade throughout; "
-            "every change happens gradually and smoothly.\n\noverall_soundscape: " + seg.get("sound", "Quiet natural "
+    film = pj.film if pj else {}
+    return ("integrated_multimodal_description: [Shot 1] " + film.get("shot", SHOT) + " " + seg["move"].strip() + " "
+            + film.get("light", LIGHT) + "\n\noverall_soundscape: " + seg.get("sound", "Quiet natural "
             "ambience.").strip() + "\n\nnon_diegetic_music: N/A")
 
 
@@ -674,7 +707,7 @@ def mix_audio(pj, segs, end, gen):
     n = 1
     if bed.exists():
         a_in += ["-i", bed]
-        af += [f"[1:a]aresample=48000,loudnorm=I=-16:TP=-2,volume={mix.get('bed_db', -12)}dB,afade=t=in:d=1.5,"
+        af += [f"[1:a]aresample=48000,loudnorm=I=-16:TP=-2,volume={mix.get('bed_db', -12)}dB,afade=t=in:d={mix.get('bed_fade_in', 1.5)},"
                f"afade=t=out:st={end - 3:.2f}:d=3[bedr]", "[bedr][key]sidechaincompress=threshold=0.05:ratio=3:attack=30:release=500[bed]"]
         parts.append("[bed]")
         n = 2
@@ -689,7 +722,7 @@ def mix_audio(pj, segs, end, gen):
         parts.append(f"[s{n}]")
         n += 1
     af.append("".join(parts) + f"amix=inputs={len(parts)}:normalize=0:duration=longest,atrim=0:{end:.3f},"
-              "loudnorm=I=-14:TP=-1.5:LRA=9[a]")
+              f"loudnorm=I={mix.get('lufs', -14)}:TP=-1.2:LRA={mix.get('lra', 9)}[a]")
     ff(*a_in, "-filter_complex", ";".join(af), "-map", "[a]", "-ar", 48000, gen / "mix.wav")
 
 
@@ -711,12 +744,52 @@ def ssim(a, b):
     return float((((2 * m1 * m2 + c1) * (2 * s12 + c2)) / ((m1 ** 2 + m2 ** 2 + c1) * (s1 + s2 + c2))).mean())
 
 
-REVIEW = ("这是一条竖屏中文自然科普短视频，写实画面，整条设计成一个连续不断的生长镜头（由多段 AI 视频首尾相接），女声旁白、"
-          "三种字幕（下方的旁白短句、念到名词时的大号标题、画面上方的古诗句加出处）、配乐和环境声。旁白稿如下：\n{script}\n"
+REVIEW = ("这是一条竖屏中文科普短视频，整条设计成一个连续不断的长镜头（由多段 AI 视频首尾相接），有旁白、"
+          "字幕（旁白短句、念到名词时的大号标题，可能还有古诗句加出处）、配乐和环境声。旁白稿如下：\n{script}\n"
           "请完整看完、听完，作为严格的审片人逐条列出具体问题，带时间点：(1) 画面明显跳变、闪烁、突然换景、变形崩坏、画面里出现文字；"
           "(2) 画面和旁白当时说的内容对不上；(3) 旁白读错字、多音字读错、语气不自然；(4) 字幕和语音不同步、字幕错字、古诗出处错误、"
           "字幕互相遮挡或看不清；(5) 配乐或环境声盖过人声、有怪声；(6) 节奏拖沓。最后打 1–10 分。用 JSON 回答：problems[] (t, type, "
           "detail, severity 1-3), score, verdict（中文）。")
+
+
+def blank_runs(pic, segs):
+    """Stretches where the picture loses almost all detail. A fast whip or a camera that swings up into open sky makes
+    H3 paint a second of pure blue or white smear; a dark well or a pass through cloud also reads low but is meant.
+    Bright and nearly featureless for 0.8 s or more is flagged for a redo; shorter or darker stretches are listed."""
+    import numpy as np
+    g = gray_frames(pic).astype(np.float32)
+    det = np.abs(np.diff(g, axis=1)).mean(axis=(1, 2)) + np.abs(np.diff(g, axis=2)).mean(axis=(1, 2))
+    lum = g.mean(axis=(1, 2))
+    r = det / max(1e-6, float(np.median(det)))
+    runs, i = [], 0
+    while i < len(r):
+        if r[i] < 0.35:
+            j = i
+            while j < len(r) and r[j] < 0.35:
+                j += 1
+            if j - i >= FPS // 2:
+                runs.append((i / FPS, j / FPS, float(r[i:j].min()), float(lum[i:j].mean())))
+            i = j
+        else:
+            i += 1
+    seg_at = lambda t: next((s["id"] for s in segs if s["t0"] <= t < s["t1"]), segs[-1]["id"])
+    out = ["", "## 糊帧和空帧（画面细节掉到整片中位数 35% 以下、连续 0.5 秒以上）", ""]
+    if not runs:
+        return out + ["没有。"]
+    redo = []
+    for t0, t1, low, lm in runs:
+        bad = t1 - t0 >= 0.8 and low < 0.1 and lm > 60
+        sid = seg_at((t0 + t1) / 2)
+        out.append(f"- {sid} 段 {t0:.1f}–{t1:.1f} 秒，最低 {low:.0%}，亮度 {lm:.0f}" + ("  ← 亮而空：多半是甩到天空或糊成一片" if bad else ""))
+        if bad and sid not in redo:
+            redo.append(sid)
+    if redo:
+        out += ["", f"要重跑的段：{'、'.join(redo)}。把这几段的 move 改成镜头一直对着地面或主体（升高时同时往下看，"
+                    "写成 rises ... while tilting down, keeping the landscape below in frame），幅度和速度降一档，"
+                    "再 `h3 --seg <段> --redo`，然后 `cut`、`check`。"]
+    else:
+        out += ["", "都不长或偏暗（深井、水下、穿云这类是故意的），抽 out/contact.jpg 里对应的段看一眼就行。"]
+    return out
 
 
 def cmd_check(pj, a):
@@ -758,6 +831,7 @@ def cmd_check(pj, a):
                    "接缝后面紧跟一段快运镜时数值也会高，不一定是跳）")
               if bad else "接缝都在整片正常运动量以内。",
               "", f"运动量：每帧平均灰度变化 {float(d.mean()):.2f}（144×256），竹子范例是 8.9；镜头完全不动的片子在 1 以下。"]
+    lines += blank_runs(pic, segs)
     # 3. contact sheets: three frames per segment, and one frame per title and per poem
     files, labels = [], []
     for s in segs:
@@ -771,7 +845,7 @@ def cmd_check(pj, a):
     caps = pj.p(f"gen/caps_{style}/events.json")
     if caps.exists():
         ev = json.load(open(caps, encoding="utf-8"))["events"]
-        pick = [e for e in ev if e["kind"] == "title"]
+        pick = [e for e in ev if e["kind"] == "title" and not re.search(r"title\d+_[0-6]\.png$", e["png"])]
         last_state = {}
         for e in ev:
             if e["kind"] == "poem":
@@ -834,11 +908,19 @@ def cmd_doctor(pj, a):
     for mod, pkg in [("httpx", "httpx"), ("PIL", "pillow"), ("numpy", "numpy")]:
         line(importlib.util.find_spec(mod), mod, f"pip install {pkg}")
     engine = config.asr()
-    if engine:
+    if engine == "cloud":
+        line(True, "转写走云端 Whisper（~/.config/whisper-cloud/config.json）", "")
+    elif engine:
         err = subprocess.run([sys.executable, "-c", f"import {engine}"], capture_output=True, text=True).stderr.strip()
         line(not err, f"转写 {engine}", "装上了但加载失败：" + (err.splitlines() or [""])[-1][:200])
     else:
         line(False, "转写", "Apple 芯片的 Mac 装 mlx-whisper，其他电脑装 faster-whisper")
+    if engine and engine != "cloud" and a.fetch_model:
+        config.fetch_model()
+    if engine == "mlx_whisper":
+        line(config.model_cached(), f"转写模型 {config.MLX_REPO}",
+             "还没下载：跑 doctor --fetch-model（约 1.6 GB）。不先下的话第一次配音会自己下，但在 DeepSeek Harness、Codex 这类"
+             "只放行工作区的沙盒里会改下到项目旁边的 .oneshot-models，每个工作区一份", must=False)
     try:
         caps = "\n".join(subprocess.run([FF, "-hide_banner", flag], capture_output=True, text=True).stdout
                          for flag in ("-filters", "-encoders"))
@@ -881,10 +963,11 @@ def main():
     ap.add_argument("--seg", nargs="*")
     ap.add_argument("--redo", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--style", choices=["moyun", "jinshu", "songyun"])
+    ap.add_argument("--style", choices=["moyun", "jinshu", "songyun", "jiaofa"])
     ap.add_argument("--caps-only", action="store_true", help="cut: reuse the joined picture and mix, lay captions on again")
     ap.add_argument("--no-gemini", action="store_true")
     ap.add_argument("--fetch-fonts", action="store_true")
+    ap.add_argument("--fetch-model", action="store_true", help="doctor: download the transcription model now")
     a = ap.parse_args()
     if a.step == "doctor":
         return cmd_doctor(None, a)

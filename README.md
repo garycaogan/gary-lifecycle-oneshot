@@ -2,7 +2,9 @@
 
 把一种植物或者动物的一辈子，拍成一个从头到尾不切的竖屏长镜头。竹鞭在土里横着走，笋芽鼓起来，一场春雨后破土，笋壳一片片落下，竹子拔节、成林、开花、结出竹米，最后回到地下的竹鞭。旁白是温柔的女声，每说到一个阶段的名字，屏幕中间出一个大字；隔几句插一句古诗，下面一行小字标出处。视频号和抖音上常见的那种「XX 的一生」自然科普片，这个 skill 从写稿到成片一条龙做出来。
 
-它是给 Claude Code、Codex 这类 Agent 用的 skill。装好以后跟 Agent 说「用 lifecycle-oneshot 做一条麦子的一生，先给我看稿子和关键帧」，它会照 `SKILL.md` 写剧本、配音、画关键帧、出片、剪辑、审片，花钱的步骤先告诉你大概多少。
+另有一套「叫法」模板：一样东西一路变出十几个名字（水：洼、池、潭、渊、泉……洋；田：畦、垄、埂……），每说出一个名字，屏幕上换一个大字，镜头跟着大幅运动。3D 动画沙盘和写实航拍两种画风都能做。
+
+它是给 Agent 用的 skill：DeepSeek Harness（dsh）、Claude Code、Codex 都行。装好以后跟 Agent 说一句话，它会照 `SKILL.md` 自己写稿、配音、画关键帧、出片、剪辑、审片，最后交成片和花费。
 
 ## 样片
 
@@ -38,25 +40,49 @@
 
 ## 装
 
-要 Python 3.11 或更新。Claude Code 放 `~/.claude/skills/`，Codex 放 `.agents/skills/`：
+要 Python 3.11 或更新。下面以 DeepSeek Harness 为例；用 Claude Code 就把 `~/.dsh/skills/` 换成 `~/.claude/skills/`，Codex 换成项目里的 `.agents/skills/`。
+
+先装 dsh 本身（要 Node.js），打开它的网页界面，在「设置 → 模型」里填 DeepSeek 的 API key：
 
 ```bash
-git clone https://github.com/garycaogan/gary-lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
-cd ~/.claude/skills/lifecycle-oneshot
+npm install -g @deepseek-ai/dsh
+dsh web
+```
+
+再把这个 skill 克隆到 dsh 的 skill 目录，装依赖、配 key：
+
+```bash
+git clone https://github.com/garycaogan/gary-lifecycle-oneshot ~/.dsh/skills/lifecycle-oneshot
+cd ~/.dsh/skills/lifecycle-oneshot
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 cp .env.example .env
 ```
 
-用文本编辑器打开 `.env`，把 key 填在等号后面，再自检一遍：
+用文本编辑器打开 `.env`，把 key 填在等号后面，再在自己的终端里自检一遍：
 
 ```bash
-.venv/bin/python scripts/oneshot.py doctor --fetch-fonts
+.venv/bin/python scripts/oneshot.py doctor --fetch-fonts --fetch-model
 ```
 
-`doctor` 不花钱，查 Python、依赖、ffmpeg、首尾帧节点图和 key（不显示 key 本身），第一次加 `--fetch-fonts` 下载约 73 MB 的开源字幕字体。全是 ✓ 就装好了，✗ 那行后面写着怎么补。第一次配音会自动下载约 1.6 GB 的转写模型，国内连不上 Hugging Face 的话在 `.env` 里写 `HF_ENDPOINT=https://hf-mirror.com`。
+`doctor` 不花钱，查 Python、依赖、ffmpeg、首尾帧节点图和 key（不显示 key 本身）。第一次加的两个参数会下载约 73 MB 的开源字幕字体和约 1.6 GB 的转写模型。这一步要在自己的终端里跑：dsh 默认的「工作区内修改」只让 Agent 往工作区里写，它写不进 skill 文件夹和 `~/.cache`。全是 ✓ 就装好了，✗ 那行后面写着怎么补。国内连不上 Hugging Face 时，工具会自动改从 hf-mirror.com 下载。
 
 懒得自己敲，也可以把仓库链接丢给 Agent，让它照 `references/setup.md` 装好。Mac 自带的 Python 太旧、Windows 上的命令怎么换，都在那页里。
+
+## 一句话出片
+
+装好以后，在 dsh 里新建会话，直接说一句话就行，中间不用再补步骤。下面四句都在 dsh 0.2.2-rc.5 + DeepSeek-V4.1-Flash 上，各自从一个空工作区实测跑通过（2026-11-27）：
+
+| 说什么 | 做出来的 |
+| --- | --- |
+| 帮我复刻一条抖音百万赞的「水」的叫法一镜到底科普 | 照 `examples/water` 现成的剧本出片：洼→池→潭……→洋，3D 小水獭沙盘加航拍 |
+| 帮我做一条「山」的叫法一镜到底科普，像抖音那条百万赞的「水」一样 | 自己写新名字链和新稿（丘、陵、冈、峰、岭……），换一个 3D 小主角 |
+| 〈抖音视频链接〉 复刻这条 | 用自带的网页搜索查这条讲什么，定叫法还是一生、写实还是动画，再自己写稿出片 |
+| 帮我做一条「一颗西瓜的一生」一镜到底科普 | 万物的一生：女声、古诗、写实微距，从种子长到结瓜再回到种子 |
+
+每条从说完那句话到出片 40–72 分钟（大部分时间在等 H3），第三方花费 16.7–23.0 元，片长 90–103 秒，中间没有弹过一次审批卡。AI 会自己看检查结果、重跑不满意的段。
+
+想先看稿子再花钱，就在那句话后面加「先给我看稿子和关键帧」。
 
 ## 一条片子怎么做出来
 
@@ -88,7 +114,7 @@ cp .env.example .env
 
 ## 验证到哪一步
 
-只有竹子这一条在 Apple 芯片的 Mac 上从写稿到成片完整跑通过。别的植物和动物还没跑过；Windows、Linux 上转写换成 faster-whisper，代码支持，但没实测。离线测试不联网、不要 key：
+上面四句在 Apple 芯片的 Mac 上，用 DeepSeek Harness 0.2.2-rc.5 和 DeepSeek-V4.1-Flash 从空工作区各跑通过一遍；竹子那条更早也从写稿到成片做过。Claude Code 和别的模型没逐条跑；Windows、Linux 上转写换成 faster-whisper，代码支持，但没实测。离线测试不联网、不要 key：
 
 ```bash
 python -m unittest discover -s tests -v

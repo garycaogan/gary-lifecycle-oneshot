@@ -4,10 +4,10 @@
 
 ## 01 放好 skill
 
-从 GitHub 克隆到放 skill 的地方，Claude Code 放 `~/.claude/skills/`（只给一个项目用就放项目里的 `.claude/skills/`），Codex 放 `.agents/skills/`：
+从 GitHub 克隆到放 skill 的地方：DeepSeek Harness（dsh）放 `~/.dsh/skills/`，Claude Code 放 `~/.claude/skills/`（只给一个项目用就放项目里的 `.dsh/skills/` 或 `.claude/skills/`），Codex 放 `.agents/skills/`。下面以 dsh 为例，用别的就换掉路径：
 
 ```bash
-git clone https://github.com/garycaogan/gary-lifecycle-oneshot ~/.claude/skills/lifecycle-oneshot
+git clone https://github.com/garycaogan/gary-lifecycle-oneshot ~/.dsh/skills/lifecycle-oneshot
 ```
 
 后面的命令都在这个文件夹里执行。
@@ -70,12 +70,12 @@ requirements.txt 里装的东西：
 ## 05 自检
 
 ```bash
-.venv/bin/python scripts/oneshot.py doctor
+.venv/bin/python scripts/oneshot.py doctor --fetch-model
 ```
 
-它不花钱，查这些东西，不会显示 key 本身：
+它不花钱，第一次加 `--fetch-model` 顺便把转写模型（约 1.6 GB）下好。在 DeepSeek Harness、Codex 这类把命令关在工作区沙盒里的 Agent 里用，一定先在自己的终端里跑这一步：沙盒写不进 `~/.cache`，不先下的话第一次配音会把模型改下到项目旁边的 `.oneshot-models`，每个工作区一份。它查这些东西，不会显示 key 本身：
 
-- Python 版本、依赖、转写、ffmpeg 的几个功能
+- Python 版本、依赖、转写和转写模型、ffmpeg 的几个功能
 - 字体在不在、对不对
 - 首尾帧节点图
 - 三把 key 配了没有（RunningHub 那行顺便显示余额）

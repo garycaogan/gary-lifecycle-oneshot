@@ -117,8 +117,8 @@ class CaptionCheck(unittest.TestCase):
             self.assertEqual([o[:2] for o in r["overlaps"]], [("竹鞭", "绿竹半含箨")])
             self.assertEqual([o[1] for o in r["outside_safe"]], ["就是冬笋"])
 
-    def test_three_styles(self):
-        self.assertEqual(set(captions.STYLES), {"moyun", "jinshu", "songyun"})
+    def test_styles(self):
+        self.assertEqual(set(captions.STYLES), {"moyun", "jinshu", "songyun", "jiaofa"})
         names = {f["file"] for f in config.FONTS["fonts"]}
         for style in captions.STYLES.values():
             for part in ("title", "poem", "sub", "src"):
@@ -154,6 +154,42 @@ class Keys(unittest.TestCase):
             self.assertEqual(config.key("EVOLINK_API_KEY"), "from-env")
         finally:
             os.unlink(fh.name)
+
+
+class SandboxedModelCache(unittest.TestCase):
+    """Agents that only allow writes inside the workspace can't fill ~/.cache: the model goes next to the project."""
+
+    def setUp(self):
+        self.saved = {k: os.environ.get(k) for k in ("HF_HOME", "HF_HUB_CACHE", "ONESHOT_NO_MODEL_HOME")}
+        for k in self.saved:
+            os.environ.pop(k, None)
+
+    def tearDown(self):
+        for k, v in self.saved.items():
+            os.environ.pop(k, None)
+            if v is not None:
+                os.environ[k] = v
+
+    def test_unwritable_cache_moves_next_to_project(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "ws" / "film1"
+            (proj / "voice").mkdir(parents=True)
+            (proj / "film.json").write_text("{}")
+            ro = Path(tmp) / "ro"
+            ro.mkdir()
+            os.chmod(ro, 0o500)
+            try:
+                os.environ["HF_HOME"] = str(ro / "hf")
+                config.model_home(proj / "voice" / "v.wav")
+                self.assertEqual(Path(os.environ["HF_HOME"]).resolve(), (Path(tmp) / "ws" / ".oneshot-models").resolve())
+            finally:
+                os.chmod(ro, 0o700)
+
+    def test_writable_cache_is_left_alone(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            os.environ["HF_HOME"] = str(Path(tmp) / "hf")
+            config.model_home(Path(tmp) / "x.wav")
+            self.assertEqual(os.environ["HF_HOME"], str(Path(tmp) / "hf"))
 
 
 if __name__ == "__main__":

@@ -1,10 +1,11 @@
 # film.json 格式
 
-完整范例 `examples/bamboo/film.json`（竹子的一生，实测成片 114 秒）。没写默认值的字段都要填。
+完整范例 `examples/bamboo/film.json`（竹子的一生，实测成片 114 秒）；叫法模板的范例 `examples/water/film.json`（水的叫法）。没写默认值的字段都要填。
 
 ## 顶层
 
 - `title`：片名，用来给配乐起名字。
+- `template`：可选，`"jiaofa"` 表示叫法模板，只是给人看的记号；真正起作用的是下面各字段。
 - `aspect`：`"9:16"`（只实测过竖屏）。
 - `budget_cny`：Evolink 这部分（配音、关键帧、审片）的花费上限，默认 40，超了工具自己停。H3 和配乐不算在里面。
 - `lead`：旁白在片子里从第几秒开始，默认 0.5。
@@ -12,17 +13,21 @@
 - `script`：中文旁白，一句一个元素（数组）。后面的 `line` 都从 0 数。
 - `voice`：
   - `direction`：表演要求，中文。工具会在后面接「她说：」和整条稿子。
+  - `says`：接在表演要求后面的那句，默认 `她说：`，男声写 `他说：`。
   - `speech_rate`：默认 1.07，约 3.2 字/秒。
   - `target_cps`：语速范围，默认 `[3.0, 3.5]`。
+  - `fit_cps`：可选，`true` 时读出来的语速不在 `target_cps` 里就整条变速（音高不变）拉到范围中间，不用再花钱重读；只在 0.7–1.45 倍之内拉。豆包的 `speech_rate` 不是准的旋钮，同一个数换一句表演要求快慢能差一半。
   - `speak`：只给配音用的替读字，比如 `{"箨": "拓"}`，字幕照原文。
   - `hint`：给 Whisper 的提示词，写稿子里的专有名词。
   - `model`：默认 `doubao-seed-audio-1-0`。
 - `look`：每张关键帧都带的画风一段话（英文），默认是写实微距纪录片。
+- `shot`：H3 提示词开头描述整条镜头的一句（英文），默认 `One single continuous photorealistic nature-documentary shot, no cuts.`；3D 动画写成 3D 动画。
+- `light`：H3 提示词里光线和调色的一句（英文），默认自然柔光、写实调色。
 - `keyframes`：关键帧链，按出现顺序写，见下。
 - `segments`：一段一个 H3 任务，见下。
-- `captions`：`style`（`moyun` / `jinshu` / `songyun`）、`titles`、`poems`，见下。
+- `captions`：`style`（`moyun` / `jinshu` / `songyun` / `jiaofa`）、`titles`、`poems`，见下。
 - `music`：`style`（Suno 的风格描述，英文）或 `file`（现成配乐，相对项目的路径）。
-- `mix`：`bed_db`（配乐，默认 −12）、`sfx_db`（H3 环境声，默认 −15）。
+- `mix`：`bed_db`（配乐，默认 −12）、`sfx_db`（H3 环境声，默认 −15）、`bed_fade_in`（配乐淡入秒数，默认 1.5）、`lufs`（整条响度，默认 −14）、`lra`（响度范围，默认 9）。
 
 ## keyframes
 

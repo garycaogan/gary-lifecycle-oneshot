@@ -1,0 +1,366 @@
+{
+ "title": "水的叫法",
+ "template": "jiaofa",
+ "aspect": "9:16",
+ "budget_cny": 40,
+ "lead": 0.05,
+ "tail": 0.7,
+ "script": [
+  "地上一个小坑里存的水不叫水，叫做洼。",
+  "把洼挖大挖深，围起来能养几尾小鱼，就叫做池。",
+  "要是地面自己塌下去，水变得幽深安静，这就成了潭。",
+  "再往下陷，深不见底，通着地下暗河，这就是渊。",
+  "地下水压得太大，从地底涌出来，叫做泉。",
+  "泉水顺着地势弯弯绕绕往下淌，叫做溪。",
+  "溪水流进两座山之间，被山壁挤得越来越窄。",
+  "水越挤越急，夹在山缝里奔下去，这就叫涧。",
+  "好几条溪涧流出山谷，汇在一起并肩往前流。",
+  "水面一下子宽了，这就是河。",
+  "几条大河再汇到一起，又宽又深，叫做江。",
+  "有的江流进四面环山的盆地，水出不去，聚成一大片静静的水面，这就是湖。",
+  "湖水里露出来的陆地，三面挨着水的，叫做渚。",
+  "四面都是水的一小块陆地，叫做岛。",
+  "同样四面环水，大到能住人、有田地的，古人叫它洲。",
+  "今天我们把世界上的大陆分成七大洲，每一块都大得望不到边。",
+  "连着陆地边缘、一眼望不到头的，就是海。",
+  "海再往外，离陆地最远、最深最大的那片水，就是洋。"
+ ],
+ "voice": {
+  "direction": "一个十二三岁的少年，声音清亮、灵动、干净，像少儿科普动画里的小主角在讲故事，不要奶声奶气、不要太稚嫩：语气活泼、好奇，抑扬顿挫明显，念到每个名字（洼、池、潭……）时稍微加重、带一点得意的发现感；一句接一句往下讲，句间只换一口气，不是播音腔，也不是纪录片旁白。",
+  "says": "他说：",
+  "speech_rate": 0.66,
+  "target_cps": [
+   3.5,
+   3.95
+  ],
+  "fit_cps": true,
+  "speak": {},
+  "hint": "洼、池、潭、渊、泉、溪、涧、河、江、湖、渚、岛、洲、海、洋。"
+ },
+ "look": "Stylized 3D animated feature-film still with realistic, tactile miniature-diorama materials: fine individual sand grains, wet stone, real-looking clear water with caustics; soft natural daylight from the upper left, clean pale sand, clear cyan-blue water, natural colour saturation (not oversaturated), photographic shallow depth of field, crisp detail, no vignette, no text, no watermark, no borders. Vertical 9:16 frame.",
+ "shot": "One single continuous 3D animated shot in the style of a high-end animated feature film, no cuts.",
+ "light": "Bright clean high-key daylight and a consistent crisp, cool, saturated colour grade throughout; the camera keeps moving and every change happens smoothly.",
+ "keyframes": [
+  {
+   "id": "K00",
+   "prompt": "Close high-angle view of a miniature diorama world built on a seamless pale white sand table: a small square raised platform of tan packed sand fills the lower two thirds of the frame, and in its centre a small shallow round puddle of clear water. At the top of the frame stand the furry brown feet and lower legs of a cute anthropomorphic young otter kid with big shiny dark eyes, soft brown fur and a cream-coloured face, wearing a loose light-grey linen tunic tied with a brown cloth belt and rolled-up beige trousers, standing upright on two legs; one small paw reaches down into view and a fingertip touches the puddle, sending a ring of ripples across it. Soft long shadows."
+  },
+  {
+   "id": "K01",
+   "from": "K00",
+   "camera": "the camera has pulled back and risen to a medium-wide high angle: the whole square sand platform with the small round puddle in its centre sits in the lower half of the frame, and the otter kid now stands full-body at the far edge of the platform on the pale sand, looking down at the puddle with curiosity.",
+   "change": "the puddle itself is unchanged; the whole otter kid is visible, centred in the upper half."
+  },
+  {
+   "id": "K02",
+   "from": "K01",
+   "change": "the puddle has been dug wider and deeper into a neat square pond with straight packed-sand walls, filled with clear water, pebbles on its bottom and two small silver fish swimming in it; the otter kid now crouches at the pond's far edge, one paw reaching toward the water."
+  },
+  {
+   "id": "K03",
+   "from": "K02",
+   "camera": "the camera has moved a little closer and lower toward the pond.",
+   "change": "the ground has sunk: the pond has become a deep round basin lined with a ring of large rough grey stones, its water dark, deep, still and mysterious with a faint mist on it; the otter kid stands on the stone rim, peering down into it."
+  },
+  {
+   "id": "K04",
+   "from": "K03",
+   "camera": "the camera has dived down through the dark water and far below it: it now looks down a deep, narrow underground abyss between sheer dark rock walls, a single shaft of pale light falling from far above, dark still water at the very bottom.",
+   "change": "a bottomless dark abyss with towering rock walls; no character in view."
+  },
+  {
+   "id": "K05",
+   "from": "K04",
+   "also": [
+    "K01"
+   ],
+   "camera": "the camera has risen back out of the depths to the bright sand table, at the same high-angle medium view as image 2.",
+   "change": "flat pale sand in bright daylight; in the centre a small hole from which clear water gushes up and bubbles over in a little dome, spreading a dark wet patch on the sand; the otter kid stands just behind it, watching it."
+  },
+  {
+   "id": "K06",
+   "from": "K05",
+   "change": "the otter kid now crouches and cups the bubbling spring water in both paws, water dripping between its fingers; from the spring a thin clear rivulet winds away across the sand in gentle S-curves toward the bottom of the frame, with a few pebbles and a small green leaf beside it."
+  },
+  {
+   "id": "K07",
+   "from": "K06",
+   "camera": "the camera has swooped low and forward along the rivulet: it is now at ground level looking along the little stream as it runs into a narrow gap between two tall walls of pale sandstone rock on the left and right.",
+   "change": "the otter kid stands in the shallow water at the entrance of the gap, both arms stretched out sideways, palms pressing against the two rock walls."
+  },
+  {
+   "id": "K08",
+   "from": "K07",
+   "camera": "the camera has moved inside the narrow gorge, just behind and beside the otter kid.",
+   "change": "the rock walls squeeze close on both sides; the water has become a fast foaming white torrent rushing over rocks; the otter kid braces one paw against the rock wall and leans into the current, fur splashed with spray."
+  },
+  {
+   "id": "K09",
+   "from": "K08",
+   "camera": "the camera has followed the water out of the gorge mouth into open sunlight.",
+   "change": "a wide shallow river of clear water flows over round pebbles, several small streams joining it from the sides, pale sandstone cliffs and distant mountains behind; the otter kid stands knee-deep in the river at the right, looking downstream."
+  },
+  {
+   "id": "K10",
+   "from": "K09",
+   "camera": "the camera has risen very high into the sky and looks down and ahead.",
+   "change": "a broad, deep, dark-blue river winds powerfully between green-and-tan mountains far below, sunlight glittering on its surface; the little diorama world has opened into a vast landscape seen from the air; the otter kid is no longer visible."
+  },
+  {
+   "id": "K11",
+   "from": "K10",
+   "camera": "the camera has flown on downstream and descended over a mountain basin.",
+   "change": "the river pours into a large calm lake completely ringed by mountains, mirror-smooth turquoise water reflecting the peaks and the blue sky, a sandy river mouth at the near shore."
+  },
+  {
+   "id": "K12",
+   "from": "K11",
+   "camera": "the camera has glided low over the lake to a rocky shore.",
+   "change": "in the centre a small spit of land of pale rocks and a little grass juts out into the clear lake water, with water on three sides and the shore joined at the back."
+  },
+  {
+   "id": "K13",
+   "from": "K12",
+   "camera": "the camera has moved out over open clear shallow turquoise water.",
+   "change": "in the centre a small round islet of sand, rocks and a tuft of grass, completely surrounded by water on all sides, gentle rings of ripples around it."
+  },
+  {
+   "id": "K14",
+   "from": "K13",
+   "camera": "the camera has risen higher and drifted back.",
+   "change": "a large island fully surrounded by bright clear sea, with green terraced fields, a few small houses and winding paths on it."
+  },
+  {
+   "id": "K15",
+   "from": "K14",
+   "camera": "the camera has soared all the way up to near orbit.",
+   "change": "a stylized view of the Earth's surface from space: green-and-tan continents in a deep blue ocean under soft white clouds, like a beautiful 3D world map."
+  },
+  {
+   "id": "K16",
+   "from": "K15",
+   "camera": "the camera has dived back down to a coastline at low altitude.",
+   "change": "a pale sandy beach along the bottom edge and beyond it an endless bright blue sea with rolling waves stretching to a clear horizon under the sun."
+  },
+  {
+   "id": "K17",
+   "from": "K16",
+   "camera": "the camera has flown far out from land and skims low over the open ocean.",
+   "change": "deep sapphire-blue water with long swells and sparkling sunlight to the horizon in every direction, no land anywhere."
+  }
+ ],
+ "segments": [
+  {
+   "id": "A",
+   "first": "K00",
+   "last": "K01",
+   "move": "Close on the small puddle: a fingertip touches the water and ripples spread; then the camera pulls back with large amplitude at medium speed and rises, revealing the whole sand platform and the otter kid standing at its edge looking down at the puddle.",
+   "sound": "A soft drip and the tinkle of ripples, light footsteps on sand, a faint breeze."
+  },
+  {
+   "id": "B",
+   "first": "K01",
+   "last": "K02",
+   "at": "把洼挖大",
+   "move": "The camera holds the high angle with a slow push-in. As if by magic the round puddle widens and deepens into a neat square pond, clear water filling it, pebbles appearing on the bottom and two small silver fish swimming in; the otter kid crouches at the edge and reaches toward the water.",
+   "sound": "Water trickling and filling, a gentle flick of fish tails."
+  },
+  {
+   "id": "C",
+   "first": "K02",
+   "last": "K03",
+   "at": "要是地面",
+   "move": "The camera pushes in with medium amplitude at slow speed and lowers. The ground sinks: the pond's sandy walls give way into a deep round basin ringed with big grey stones, and the water turns dark, deep and still with drifting mist; the otter kid hops up onto the stone rim and peers down.",
+   "sound": "A low rumble of sinking earth, stones settling, then a hushed still-water quiet and a single drip."
+  },
+  {
+   "id": "D",
+   "first": "K03",
+   "last": "K04",
+   "at": "再往下陷",
+   "move": "The camera tilts down and dives with large amplitude at fast speed straight into the dark water and keeps plunging down a narrow underground abyss between sheer dark rock walls, then slows and hangs above the bottomless dark water under a shaft of light from far above.",
+   "sound": "A whoosh of the dive, a muffled underwater rumble, a deep hollow cavern echo, distant dripping."
+  },
+  {
+   "id": "E",
+   "first": "K04",
+   "last": "K05",
+   "at": "地下水压",
+   "move": "The camera rises back up along the same narrow vertical rock shaft with large amplitude at fast speed, the dark wet rock walls sliding past the lens, and that shaft opens through a round hole in the pale white packed sand of the miniature table; the camera climbs out through that round hole and settles into a high-angle medium view of the pale sand table, in the centre the hole where clear water now bubbles up in a little dome and spreads a dark wet patch over the sand; the otter kid stands just behind the spring, watching it.",
+   "sound": "A rising whoosh, then gurgling, bubbling spring water bursting out of the ground."
+  },
+  {
+   "id": "F",
+   "first": "K05",
+   "last": "K06",
+   "at": "泉水顺着",
+   "move": "The camera slowly pushes in. The otter kid crouches and cups the bubbling water in both paws, letting it drip through its fingers; the spring overflows and a thin clear rivulet winds away across the sand in gentle S-curves.",
+   "sound": "Bubbling spring water, drips falling from paws, a thin trickling stream."
+  },
+  {
+   "id": "G",
+   "first": "K06",
+   "last": "K07",
+   "at": "溪水流进",
+   "move": "The camera swoops low with large amplitude at medium speed and glides forward along the little stream at ground level, following it into a narrow gap between two tall pale sandstone walls; the otter kid runs ahead into the shallow water and stretches out both arms to press against the walls.",
+   "sound": "Trickling water growing louder, a short whoosh of the camera, splashing little footsteps."
+  },
+  {
+   "id": "H",
+   "first": "K07",
+   "last": "K08",
+   "at": "水越挤越急",
+   "move": "The camera follows close behind the otter kid with medium amplitude at fast speed into the gorge; the walls close in and the water speeds up into a foaming white torrent rushing over rocks; the otter kid braces a paw on the wall and leans into the current, splashed with spray.",
+   "sound": "A rushing white-water torrent echoing off rock walls, spray splashing."
+  },
+  {
+   "id": "I",
+   "first": "K08",
+   "last": "K09",
+   "at": "好几条溪涧",
+   "move": "The camera races forward with large amplitude at fast speed over the rushing water and bursts out of the gorge mouth into open sunlight, where several streams join into one wide shallow river over round pebbles; the camera slows as the otter kid wades knee-deep at the right, looking downstream.",
+   "sound": "The torrent's roar opening up into a broad steady river flowing over pebbles, faint birdsong.",
+   "ease_in": true
+  },
+  {
+   "id": "J",
+   "first": "K09",
+   "last": "K10",
+   "at": "几条大河",
+   "move": "The camera rises steeply with large amplitude at fast speed into the sky, the otter kid and the pebbly river shrinking away below, until it looks down on a broad deep dark-blue river winding powerfully between mountains, sunlight glittering on it.",
+   "sound": "A big rising wind whoosh, then high-altitude wind over a powerful wide river."
+  },
+  {
+   "id": "K",
+   "first": "K10",
+   "last": "K11",
+   "at": "有的江",
+   "move": "The camera flies forward with medium amplitude at medium speed following the great river downstream and gently descends as the river pours into a basin ringed by mountains and spreads into a vast calm mirror-smooth turquoise lake reflecting the peaks.",
+   "sound": "Wind softening, the river's flow fading into calm lapping water."
+  },
+  {
+   "id": "L",
+   "first": "K11",
+   "last": "K12",
+   "at": "湖水里",
+   "move": "The camera glides low with medium amplitude at medium speed across the calm lake toward a rocky shore and settles over a small spit of pale rocks and grass jutting into the clear water, water on three sides.",
+   "sound": "Gentle lapping of lake water on rocks, a soft breeze."
+  },
+  {
+   "id": "M",
+   "first": "K12",
+   "last": "K13",
+   "at": "四面都是水",
+   "move": "The camera skims forward with large amplitude at fast speed low over clear shallow turquoise water, then slows above a small round islet of sand, rocks and grass completely surrounded by water, rings of ripples around it.",
+   "sound": "A swooshing glide over water, then soft ripples."
+  },
+  {
+   "id": "N",
+   "first": "K13",
+   "last": "K14",
+   "at": "同样四面环水",
+   "move": "The camera rises with medium amplitude at medium speed and drifts back; the view widens to a large island in bright clear sea, with green terraced fields, tiny houses and winding paths.",
+   "sound": "A rising breeze, gentle surf around an island, distant seabirds."
+  },
+  {
+   "id": "O",
+   "first": "K14",
+   "last": "K15",
+   "at": "今天我们",
+   "move": "The camera soars straight up with large amplitude at fast speed, the island shrinking away, up through thin clouds until the whole surface of the Earth spreads below like a 3D world map, green-and-tan continents in a deep blue ocean.",
+   "sound": "A long rising whoosh into thin high-altitude wind."
+  },
+  {
+   "id": "P",
+   "first": "K15",
+   "last": "K16",
+   "at": "连着陆地",
+   "move": "The camera dives down with large amplitude at fast speed through the clouds toward a coastline and levels out low over a pale sandy beach, an endless bright blue sea with rolling waves stretching to the horizon.",
+   "sound": "A diving whoosh, then waves breaking and washing up a sandy shore."
+  },
+  {
+   "id": "Q",
+   "first": "K16",
+   "last": "K17",
+   "at": "海再往外",
+   "move": "The camera flies out over the waves with medium amplitude at fast speed, leaving the beach behind, skimming low over the open ocean until deep sapphire-blue water with long sparkling swells stretches to the horizon in every direction.",
+   "sound": "Wind over the open ocean, deep rolling swells, sea spray."
+  }
+ ],
+ "captions": {
+  "style": "jiaofa",
+  "titles": [
+   {
+    "line": 0,
+    "text": "洼"
+   },
+   {
+    "line": 1,
+    "text": "池"
+   },
+   {
+    "line": 2,
+    "text": "潭"
+   },
+   {
+    "line": 3,
+    "text": "渊"
+   },
+   {
+    "line": 4,
+    "text": "泉"
+   },
+   {
+    "line": 5,
+    "text": "溪"
+   },
+   {
+    "line": 7,
+    "text": "涧"
+   },
+   {
+    "line": 9,
+    "text": "河"
+   },
+   {
+    "line": 10,
+    "text": "江"
+   },
+   {
+    "line": 11,
+    "text": "湖"
+   },
+   {
+    "line": 12,
+    "text": "渚"
+   },
+   {
+    "line": 13,
+    "text": "岛"
+   },
+   {
+    "line": 14,
+    "text": "洲"
+   },
+   {
+    "line": 16,
+    "text": "海"
+   },
+   {
+    "line": 17,
+    "text": "洋"
+   }
+  ],
+  "poems": []
+ },
+ "music": {
+  "style": "light playful children's educational cartoon background music, plucked guzheng and pizzicato strings with marimba and a soft bamboo flute, light hand percussion, bright and curious, 96 bpm, instrumental"
+ },
+ "mix": {
+  "bed_db": -11,
+  "sfx_db": -10,
+  "bed_fade_in": 0.3,
+  "lufs": -10,
+  "lra": 5
+ }
+}
